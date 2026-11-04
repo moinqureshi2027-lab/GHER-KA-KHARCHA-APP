@@ -1,0 +1,1378 @@
+<!doctype html>
+<html lang="ur">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Ghar Kharcha Live</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+      :root{
+        --bg:#fbeef4; --bg2:#f6dcea; --card:#ffffff; --card2:#fff7fb;
+        --ink:#40162f; --ink-soft:#8a5572; --ink-faint:#b98ba3;
+        --plum:#7c2d5e; --plum-d:#5c1f45; --rose:#c2437e; --rose-l:#e77cae;
+        --gold:#e9b64f; --gold-d:#bd8627;
+        --green:#1e9e66; --green-d:#14714a;
+        --red:#d63e4e; --red-d:#a92a38;
+        --amber:#e08a00;
+        --line:#f2d5e2;
+        --shadow-card: 0 4px 0 rgba(124,45,94,.10), 0 16px 28px rgba(124,45,94,.14), inset 0 2px 0 rgba(255,255,255,.9);
+        --shadow-hero: 0 8px 0 rgba(70,18,50,.35), 0 24px 38px rgba(92,31,69,.38), inset 0 2px 0 rgba(255,255,255,.4), inset 0 -14px 26px rgba(40,5,28,.28);
+        --nav-bg: rgba(255,255,255,.92);
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          --bg:#22101d; --bg2:#170a14; --card:#33162a; --card2:#3a1a30;
+          --ink:#f9eaf3; --ink-soft:#d3a3bf; --ink-faint:#a3768f;
+          --line:#55263f;
+          --shadow-card: 0 4px 0 rgba(0,0,0,.35), 0 16px 28px rgba(0,0,0,.4), inset 0 2px 0 rgba(255,255,255,.08);
+          --nav-bg: rgba(43,18,35,.94);
+        }
+      }
+      *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+      html,body{ margin:0; padding:0; }
+      body{
+        font-family:"Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+        background-attachment: fixed;
+        color: var(--ink);
+        min-height:100vh;
+      }
+      .app{ max-width:540px; margin:0 auto; padding:18px 16px 118px; }
+      h1,h2,h3{ margin:0; }
+      button{ font-family:inherit; cursor:pointer; }
+      input,select,textarea{ font-family:inherit; }
+
+      /* ---------- generic 3D pieces ---------- */
+      .card3d{
+        background: var(--card); border-radius:22px; padding:18px;
+        box-shadow: var(--shadow-card); border:1px solid var(--line);
+      }
+      .btn3d{
+        border:none; border-radius:18px; min-height:56px; padding:12px 18px;
+        font-size:17px; font-weight:900; color:#fff; letter-spacing:.2px;
+        display:inline-flex; align-items:center; justify-content:center; gap:8px;
+        transition: transform .06s ease, box-shadow .06s ease, filter .15s ease;
+        width:100%;
+      }
+      .btn3d:active{ transform: translateY(5px); }
+      .btn-rose{ background: linear-gradient(180deg, var(--rose-l), var(--rose) 55%, #a93468); box-shadow: 0 6px 0 #7e2450, 0 14px 22px rgba(194,67,126,.35), inset 0 2px 0 rgba(255,255,255,.45); }
+      .btn-rose:active{ box-shadow: 0 1px 0 #7e2450, 0 4px 8px rgba(194,67,126,.3), inset 0 2px 0 rgba(255,255,255,.45); }
+      .btn-green{ background: linear-gradient(180deg, #3ec984, var(--green) 55%, #178354); box-shadow: 0 6px 0 var(--green-d), 0 14px 22px rgba(30,158,102,.32), inset 0 2px 0 rgba(255,255,255,.45); }
+      .btn-green:active{ box-shadow: 0 1px 0 var(--green-d), 0 4px 8px rgba(30,158,102,.3), inset 0 2px 0 rgba(255,255,255,.45); }
+      .btn-gold{ background: linear-gradient(180deg, #f6cd72, var(--gold) 55%, #d39f35); color:#4a2f05; box-shadow: 0 6px 0 var(--gold-d), 0 14px 22px rgba(233,182,79,.35), inset 0 2px 0 rgba(255,255,255,.55); }
+      .btn-gold:active{ box-shadow: 0 1px 0 var(--gold-d), 0 4px 8px rgba(233,182,79,.3), inset 0 2px 0 rgba(255,255,255,.55); }
+      .btn-ghost{
+        background: var(--card2); color: var(--plum); border:2px solid var(--line);
+        box-shadow: 0 4px 0 rgba(124,45,94,.14), inset 0 2px 0 rgba(255,255,255,.7);
+      }
+      @media (prefers-color-scheme: dark){ .btn-ghost{ color:#f3c6dd; } }
+      .btn-ghost:active{ box-shadow: 0 1px 0 rgba(124,45,94,.14); }
+      .btn3d:disabled{ filter:grayscale(.5) brightness(1.05); opacity:.75; }
+      .btn-sm{ min-height:48px; font-size:15px; border-radius:14px; padding:8px 14px; width:auto; }
+
+      .chip{
+        border:2px solid var(--line); background: var(--card2); color: var(--ink);
+        border-radius:999px; padding:10px 14px; min-height:48px; font-size:15px; font-weight:800;
+        display:inline-flex; align-items:center; gap:6px;
+        box-shadow: 0 3px 0 rgba(124,45,94,.12);
+      }
+      .chip:active{ transform: translateY(2px); box-shadow: 0 1px 0 rgba(124,45,94,.12); }
+      .chip.sel{
+        background: linear-gradient(180deg, var(--rose-l), var(--rose)); color:#fff; border-color:#a93468;
+        box-shadow: 0 4px 0 #7e2450, inset 0 2px 0 rgba(255,255,255,.4);
+      }
+      .chiprow{ display:flex; flex-wrap:wrap; gap:8px; }
+
+      .field label{ display:block; font-size:13px; font-weight:900; color: var(--ink-soft); margin:0 0 6px 2px; letter-spacing:.3px; }
+      .field input, .field select, .field textarea{
+        width:100%; min-height:54px; border-radius:14px; border:2px solid var(--line);
+        background: var(--card2); color: var(--ink); font-size:17px; font-weight:800; padding:10px 14px;
+      }
+      .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color: var(--rose); }
+      .field .amount{ font-size:30px; font-weight:900; text-align:center; min-height:68px; }
+      .field .err{ display:none; color: var(--red); font-weight:900; font-size:14px; margin-top:6px; }
+      .field.invalid input{ border-color: var(--red); }
+      .field.invalid .err{ display:block; }
+      @keyframes pulseField{ 0%,100%{ box-shadow:0 0 0 0 rgba(233,182,79,.0);} 50%{ box-shadow:0 0 0 6px rgba(233,182,79,.45);} }
+      .pulse{ animation: pulseField 1s ease-in-out 3; border-color: var(--gold) !important; }
+
+      .bar{ height:16px; border-radius:999px; background: rgba(124,45,94,.14); overflow:hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,.18); }
+      .bar > i{ display:block; height:100%; border-radius:999px; background: linear-gradient(180deg,#3ec984,#178354); box-shadow: inset 0 2px 0 rgba(255,255,255,.5); transition: width .4s ease; }
+      .bar > i.amber{ background: linear-gradient(180deg,#ffb03a,#e08a00); }
+      .bar > i.red{ background: linear-gradient(180deg,#f06a76,#c22c3c); }
+
+      .badge{ display:inline-flex; align-items:center; gap:4px; font-size:12.5px; font-weight:900; padding:4px 10px; border-radius:999px; }
+      .badge-due{ background:#fde3e7; color: var(--red-d); }
+      .badge-done{ background:#dcf5e8; color: var(--green-d); }
+      @media (prefers-color-scheme: dark){ .badge-due{ background:#57222c; color:#ffb3bc;} .badge-done{ background:#173f2d; color:#8fe6bb;} }
+
+      /* ---------- header / hero ---------- */
+      .greet{ font-size:15px; font-weight:800; color: var(--ink-soft); }
+      .greet b{ color: var(--ink); }
+      .monthline{ font-size:26px; font-weight:900; margin-top:2px; }
+      .hero{
+        margin-top:14px; border-radius:28px; padding:22px 20px 20px; color:#fff; position:relative; overflow:hidden;
+        background: linear-gradient(140deg, #8a3570 0%, #7c2d5e 34%, #b03a75 72%, #c95b8d 100%);
+        box-shadow: var(--shadow-hero);
+      }
+      .hero::before{ content:""; position:absolute; inset:0; background: radial-gradient(420px 190px at 85% -30px, rgba(255,255,255,.35), rgba(255,255,255,0) 60%); pointer-events:none; }
+      .hero .lbl{ font-size:14px; font-weight:800; opacity:.85; letter-spacing:.4px; }
+      .hero .big{ font-size:42px; font-weight:900; line-height:1.05; margin:4px 0 2px; text-shadow: 0 3px 0 rgba(60,10,40,.35); }
+      .hero .sub{ font-size:14.5px; font-weight:700; opacity:.92; }
+      .hero .budgetbox{ margin-top:16px; background: rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.25); border-radius:16px; padding:12px 14px; backdrop-filter: blur(2px); }
+      .hero .budgetbox .row{ display:flex; justify-content:space-between; font-size:13.5px; font-weight:800; }
+      .hero .bar{ background: rgba(0,0,0,.28); margin-top:8px; }
+      .hero .warn{ margin-top:9px; font-size:14px; font-weight:900; display:none; }
+      .hero .warn.show{ display:block; }
+      .hero .warn.amber{ color:#ffd98a; }
+      .hero .warn.red{ color:#ffb3bc; }
+
+      .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
+      .stat .lbl{ font-size:13px; font-weight:900; color: var(--ink-soft); letter-spacing:.3px; }
+      .stat .val{ font-size:24px; font-weight:900; margin-top:3px; }
+      .stat .val.green{ color: var(--green); } .stat .val.rose{ color: var(--rose); }
+      .stat .mini{ font-size:13px; color: var(--ink-soft); font-weight:700; margin-top:2px; }
+
+      .secttl{ font-size:19px; font-weight:900; margin:22px 2px 10px; display:flex; align-items:center; gap:8px; }
+      .secttl .sp{ flex:1; }
+      .topcat{ display:flex; align-items:center; gap:10px; padding:9px 0; }
+      .topcat + .topcat{ border-top:1px dashed var(--line); }
+      .topcat .nm{ font-weight:800; font-size:15.5px; }
+      .topcat .amt{ margin-left:auto; font-weight:900; }
+      .topcat .trk{ flex:0 0 86px; }
+
+      .cta-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px; }
+      .sadqa-card{ background: linear-gradient(150deg, #fdf6e3, #fbeec4); border:1px solid #eed9a0; }
+      @media (prefers-color-scheme: dark){ .sadqa-card{ background: linear-gradient(150deg,#3d2c10,#2e2008); border-color:#6d551f; } }
+      .week-card .wk-big{ font-size:30px; font-weight:900; }
+      .remind-card{ border:2px dashed var(--gold-d); background: var(--card2); }
+
+      /* ---------- lists ---------- */
+      .daygroup{ margin-top:16px; }
+      .daygroup .dhead{ display:flex; justify-content:space-between; align-items:baseline; font-weight:900; font-size:15px; color: var(--ink-soft); margin:0 2px 8px; }
+      .daygroup .dhead .dt{ color: var(--ink); }
+      .entry{
+        display:flex; align-items:center; gap:12px; background: var(--card); border:1px solid var(--line);
+        border-radius:16px; padding:12px 14px; margin-bottom:9px; box-shadow: 0 3px 0 rgba(124,45,94,.08), 0 8px 16px rgba(124,45,94,.08);
+        cursor:pointer; min-height:60px;
+      }
+      .entry .ic{ font-size:24px; width:44px; height:44px; flex:0 0 44px; display:flex; align-items:center; justify-content:center; background: var(--card2); border-radius:12px; border:1px solid var(--line); }
+      .entry .tx{ flex:1; min-width:0; }
+      .entry .tx .t1{ font-weight:900; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .entry .tx .t2{ font-size:13px; color: var(--ink-soft); font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .entry .amt{ font-weight:900; font-size:16.5px; white-space:nowrap; }
+      .entry .amt.neg{ color: var(--rose); } .entry .amt.pos{ color: var(--green); } .entry .amt.gold{ color: var(--gold-d); }
+      .iconbtn{ border:none; background:transparent; min-width:44px; min-height:44px; display:flex; align-items:center; justify-content:center; border-radius:12px; color: var(--ink-faint); flex:0 0 auto; }
+      .iconbtn:active{ background: var(--card2); color: var(--red); }
+      .empty{ text-align:center; color: var(--ink-soft); font-weight:800; padding:26px 16px; font-size:15.5px; }
+      .empty .big{ font-size:38px; display:block; margin-bottom:8px; }
+
+      .billrow{ display:flex; align-items:center; gap:12px; padding:13px 0; }
+      .billrow + .billrow{ border-top:1px dashed var(--line); }
+      .billrow .tx{ flex:1; min-width:0; }
+      .billrow .t1{ font-weight:900; font-size:16.5px; }
+      .billrow .t2{ font-size:13px; color: var(--ink-soft); font-weight:700; }
+      .billrow .amt{ font-weight:900; font-size:16.5px; white-space:nowrap; }
+      .paidbtn{ min-height:48px; border-radius:14px; border:none; padding:8px 14px; font-weight:900; font-size:14.5px; color:#fff;
+        background: linear-gradient(180deg,#3ec984,#178354); box-shadow: 0 4px 0 var(--green-d), inset 0 2px 0 rgba(255,255,255,.4); white-space:nowrap; }
+      .paidbtn:active{ transform: translateY(3px); box-shadow: 0 1px 0 var(--green-d); }
+      .paidbtn.ispaid{ background: var(--card2); color: var(--green-d); border:2px solid var(--green); box-shadow:none; }
+      @media (prefers-color-scheme: dark){ .paidbtn.ispaid{ color:#8fe6bb; } }
+
+      .tankhwah{ margin-top:16px; min-height:64px; font-size:18px; border-radius:20px; }
+
+      /* ---------- reports ---------- */
+      .catbar{ margin:12px 0; }
+      .catbar .r{ display:flex; justify-content:space-between; font-weight:800; font-size:15px; margin-bottom:5px; }
+      .catbar .r .a{ font-weight:900; }
+      .wkbar{ margin:11px 0; }
+      .wkbar .r{ display:flex; justify-content:space-between; font-size:14px; font-weight:800; margin-bottom:5px; }
+      .wkbar .r .a{ font-weight:900; }
+      .insight{ display:flex; gap:10px; padding:10px 0; font-size:15.5px; font-weight:700; line-height:1.45; }
+      .insight + .insight{ border-top:1px dashed var(--line); }
+      .insight .dot{ font-size:19px; flex:0 0 auto; }
+      .vs{ font-size:15px; font-weight:800; color: var(--ink-soft); }
+      .vs b.up{ color: var(--red); } .vs b.down{ color: var(--green); }
+
+      /* ---------- nav ---------- */
+      .nav{
+        position:fixed; left:50%; transform:translateX(-50%); bottom: calc(12px + env(safe-area-inset-bottom));
+        width: min(540px, calc(100% - 20px)); z-index:60;
+        background: var(--nav-bg); border:1px solid var(--line); border-radius:26px;
+        box-shadow: 0 10px 0 rgba(92,31,69,.10), 0 24px 40px rgba(92,31,69,.28), inset 0 2px 0 rgba(255,255,255,.6);
+        display:grid; grid-template-columns: repeat(5, 1fr); padding:8px 6px;
+        backdrop-filter: blur(8px);
+      }
+      .nav button{ border:none; background:transparent; min-height:56px; border-radius:18px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; color: var(--ink-soft); font-size:11.5px; font-weight:900; }
+      .nav button svg{ width:24px; height:24px; }
+      .nav button.on{ background: linear-gradient(180deg, var(--rose-l), var(--rose)); color:#fff; box-shadow: 0 4px 0 #7e2450, inset 0 2px 0 rgba(255,255,255,.4); }
+      .nav button:active{ transform: translateY(2px); }
+
+      .view{ display:none; }
+      .view.on{ display:block; animation: fadein .18s ease; }
+      @keyframes fadein{ from{ opacity:0; transform: translateY(4px);} to{ opacity:1; transform:none;} }
+      @media (prefers-reduced-motion: reduce){ .view.on{ animation:none; } .pulse{ animation:none; } }
+
+      /* ---------- sheets / overlays ---------- */
+      .scrim{ position:fixed; inset:0; background: rgba(43,8,30,.55); z-index:80; display:none; }
+      .scrim.on{ display:block; }
+      .sheet{
+        position:fixed; left:50%; transform:translate(-50%, 105%); bottom:0; z-index:90;
+        width: min(540px, 100%); max-height: 92vh; overflow-y:auto;
+        background: var(--bg); border-radius:28px 28px 0 0; padding:20px 18px calc(22px + env(safe-area-inset-bottom));
+        transition: transform .25s ease; box-shadow: 0 -18px 40px rgba(0,0,0,.35);
+      }
+      .sheet.on{ transform:translate(-50%, 0); }
+      .sheet h3{ font-size:21px; font-weight:900; margin-bottom:14px; }
+      .sheet .field{ margin-bottom:14px; }
+      .sheet .x{ position:absolute; top:12px; right:12px; }
+
+      .setupwrap{ position:fixed; inset:0; z-index:100; background: linear-gradient(160deg,#8a3570,#7c2d5e 45%,#b03a75); display:none; overflow-y:auto; }
+      .setupwrap.on{ display:block; }
+      .setupcard{ max-width:480px; margin:0 auto; padding:34px 20px 40px; color:#fff; }
+      .setupcard h2{ font-size:27px; font-weight:900; line-height:1.25; }
+      .setupcard p{ font-weight:700; opacity:.9; font-size:16px; line-height:1.5; }
+      .setupcard .panel{ background:#fff; color: var(--ink); border-radius:24px; padding:20px; margin-top:18px; box-shadow: 0 8px 0 rgba(70,18,50,.35), 0 22px 34px rgba(40,5,28,.35); }
+      .dots{ display:flex; gap:8px; justify-content:center; margin:18px 0 4px; }
+      .dots i{ width:11px; height:11px; border-radius:50%; background: rgba(255,255,255,.4); }
+      .dots i.on{ background: var(--gold); box-shadow: 0 0 0 4px rgba(233,182,79,.3); }
+      .setupstep{ display:none; } .setupstep.on{ display:block; }
+      .skiplink{ display:block; text-align:center; margin-top:14px; color: var(--ink-soft); font-weight:900; background:none; border:none; width:100%; min-height:48px; font-size:15px; }
+
+      .toast{
+        position:fixed; left:50%; transform:translate(-50%, 20px); bottom: calc(96px + env(safe-area-inset-bottom)); z-index:120;
+        background:#2e7d4f; color:#fff; font-weight:900; font-size:15.5px; padding:13px 20px; border-radius:999px;
+        box-shadow: 0 10px 24px rgba(0,0,0,.3); opacity:0; pointer-events:none; transition: all .25s ease; max-width: calc(100% - 32px); text-align:center;
+      }
+      .toast.on{ opacity:1; transform:translate(-50%, 0); }
+
+      .confirmbox{ text-align:center; }
+      .confirmbox p{ font-size:16.5px; font-weight:800; line-height:1.5; }
+      .confirmbox .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px; }
+      .btn-red{ background: linear-gradient(180deg,#f06a76,var(--red) 55%,#b02a37); box-shadow: 0 6px 0 var(--red-d), 0 14px 22px rgba(214,62,78,.3), inset 0 2px 0 rgba(255,255,255,.4); }
+      .btn-red:active{ box-shadow: 0 1px 0 var(--red-d); }
+
+      .searchbar input{ width:100%; min-height:52px; border-radius:999px; border:2px solid var(--line); background: var(--card); padding:10px 18px; font-size:16px; font-weight:700; color: var(--ink); box-shadow: var(--shadow-card); }
+      .searchbar input:focus{ outline:none; border-color: var(--rose); }
+      .save-note{ font-size:13px; color: var(--ink-faint); font-weight:700; text-align:center; margin-top:10px; }
+    </style>
+  </head>
+  <body>
+  <div class="app">
+
+    <!-- ================= HOME ================= -->
+    <section class="view on" id="view-home">
+      <div class="greet">Assalam-o-Alaikum 🌸 <b>Ghar Kharcha</b></div>
+      <div class="monthline" id="home-month">—</div>
+
+      <div class="hero">
+        <div class="lbl">IS MAHINE KI BACHAT</div>
+        <div class="big" id="hero-bachat">Rs 0</div>
+        <div class="sub" id="hero-sub">Aamdani − Kharcha</div>
+        <div class="budgetbox">
+          <div class="row"><span>Mahana Budget</span><span id="budget-line">Rs 0 / Rs 0</span></div>
+          <div class="bar"><i id="budget-fill" style="width:0%"></i></div>
+          <div class="warn amber" id="warn-80">⚠️ Budget khatam honay wala hai — kharcha sambhal kar karein!</div>
+          <div class="warn red" id="warn-100">🚨 Budget cross ho gaya! Is mahine kharcha budget se zyada ho gaya hai.</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card3d stat">
+          <div class="lbl">💰 KUL AAMDANI</div>
+          <div class="val green" id="stat-income">Rs 0</div>
+          <div class="mini">is mahine</div>
+        </div>
+        <div class="card3d stat">
+          <div class="lbl">🧾 KUL KHARCHA</div>
+          <div class="val rose" id="stat-expense">Rs 0</div>
+          <div class="mini">is mahine</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card3d stat">
+          <div class="lbl">📅 AAJ KA KHARCHA</div>
+          <div class="val" id="stat-today">Rs 0</div>
+          <div class="mini" id="stat-today-date">—</div>
+        </div>
+        <div class="card3d stat">
+          <div class="lbl">📆 IS HAFTAY KI BACHAT</div>
+          <div class="val" id="stat-week">Rs 0</div>
+          <div class="mini" id="stat-week-range">Peer – Itwaar</div>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <button class="btn3d btn-rose" id="btn-add-expense">＋ Kharcha</button>
+        <button class="btn3d btn-green" id="btn-add-income">＋ Aamdani</button>
+      </div>
+
+      <div class="card3d remind-card" id="lazmi-remind" style="display:none; margin-top:16px;">
+        <div style="font-size:17px; font-weight:900;">⏳ Lazmi Kharchay Baaki Hain</div>
+        <p style="margin:6px 0 12px; font-weight:700; color:var(--ink-soft); font-size:15px;" id="lazmi-remind-txt"></p>
+        <button class="btn3d btn-gold btn-sm" id="btn-goto-bills" style="width:100%;">Bills mein ja kar add karein →</button>
+      </div>
+
+      <h3 class="secttl">🏆 Sab se Zyada Kharcha</h3>
+      <div class="card3d" id="top-cats"><div class="empty">Is mahine abhi koi kharcha nahi</div></div>
+
+      <h3 class="secttl">🤲 Sadqa</h3>
+      <div class="card3d sadqa-card">
+        <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+          <div>
+            <div style="font-size:13px; font-weight:900; color:var(--ink-soft);">IS MAHINE KA SADQA</div>
+            <div style="font-size:26px; font-weight:900;" id="sadqa-month">Rs 0</div>
+          </div>
+          <div>
+            <div style="font-size:13px; font-weight:900; color:var(--ink-soft);">KUL SADQA (HAR WAQT)</div>
+            <div style="font-size:26px; font-weight:900;" id="sadqa-total">Rs 0</div>
+          </div>
+        </div>
+        <p style="margin:10px 0 12px; font-weight:700; color:var(--ink-soft); font-size:14px;">Sadqa roz ke kharche se alag hisab mein rehta hai — bachat par asar nahi parta.</p>
+        <button class="btn3d btn-gold" id="btn-add-sadqa">🤲 Sadqa Add Karein</button>
+      </div>
+
+      <h3 class="secttl">📅 Hafta-war Bachat</h3>
+      <div class="card3d week-card">
+        <div style="font-size:13px; font-weight:900; color:var(--ink-soft);">IS HAFTAY KI BACHAT (PEER – ITWAAR)</div>
+        <div class="wk-big" id="week-bachat-big">Rs 0</div>
+        <div style="font-weight:700; color:var(--ink-soft); font-size:14.5px;" id="week-bachat-detail">Aamdani − Kharcha</div>
+        <div class="bar" style="margin-top:12px;"><i id="week-goal-fill" style="width:0%"></i></div>
+        <div style="font-size:13.5px; font-weight:800; color:var(--ink-soft); margin-top:7px;" id="week-goal-line">Hafta-war hadaf set nahi hai — Settings se set karein</div>
+      </div>
+    </section>
+
+    <!-- ================= KHARCHA ================= -->
+    <section class="view" id="view-kharcha">
+      <div class="monthline" style="font-size:24px;">🧾 Kharcha &amp; Aamdani</div>
+      <p style="color:var(--ink-soft); font-weight:700; margin:4px 0 0;">Kisi bhi entry ko tap kar ke badlein, 🗑 se delete karein.</p>
+
+      <div class="searchbar" style="margin-top:16px;">
+        <input type="search" id="exp-search" placeholder="🔍 Kharcha dhoondhein… (masalan: doodh)" />
+      </div>
+      <div class="chiprow" id="exp-filter" style="margin-top:12px;"></div>
+
+      <button class="btn3d btn-rose" id="btn-add-expense2" style="margin-top:16px;">＋ Naya Kharcha Add Karein</button>
+      <div id="expense-list"></div>
+
+      <h3 class="secttl">💰 Aamdani <span class="sp"></span><span style="font-size:15px; color:var(--green);" id="income-month-total"></span></h3>
+      <button class="btn3d btn-green" id="btn-add-income2">＋ Aamdani Add Karein</button>
+      <div id="income-list" style="margin-top:14px;"></div>
+
+      <h3 class="secttl">🤲 Sadqa <span class="sp"></span><span style="font-size:15px; color:var(--gold-d);" id="sadqa-list-total"></span></h3>
+      <button class="btn3d btn-gold" id="btn-add-sadqa2">＋ Sadqa Add Karein</button>
+      <div id="sadqa-list" style="margin-top:14px;"></div>
+    </section>
+
+    <!-- ================= BILLS ================= -->
+    <section class="view" id="view-bills">
+      <div class="monthline" style="font-size:24px;">🧾 Bills &amp; Fixed</div>
+      <p style="color:var(--ink-soft); font-weight:700; margin:4px 0 0;">Mahana bills aur lazmi kharchon ka hisab — sab ek jagah.</p>
+
+      <h3 class="secttl">📌 Mahana Bills</h3>
+      <div class="card3d">
+        <div id="bill-list"></div>
+        <button class="btn3d btn-ghost" id="btn-add-bill" style="margin-top:12px;">＋ Bill Add Karein</button>
+      </div>
+
+      <h3 class="secttl">📌 Lazmi Kharchay <span class="sp"></span><span style="font-size:15px;" id="fixed-total"></span></h3>
+      <div class="card3d">
+        <p style="margin:0 0 10px; font-weight:700; color:var(--ink-soft); font-size:14.5px;">Jo kharchay har mahine lazmi hotay hain, woh yahan ek dafa save kar lein. Kisi naam ko tap karein — bas raqam likhni hogi:</p>
+        <div class="chiprow" id="fixed-presets"></div>
+        <div id="fixed-list" style="margin-top:6px;"></div>
+        <button class="btn3d btn-ghost" id="btn-add-fixed" style="margin-top:12px;">＋ Lazmi Kharcha Add Karein</button>
+        <button class="btn3d btn-green tankhwah" id="btn-tankhwah">💵 Tankhwah Aa Gayi — Sab Lazmi Kharchay Add Karein</button>
+        <div class="save-note" id="tankhwah-note">Har lazmi kharcha mahine mein sirf ek dafa add hota hai — duplicate nahi banta.</div>
+      </div>
+    </section>
+
+    <!-- ================= REPORTS ================= -->
+    <section class="view" id="view-reports">
+      <div class="monthline" style="font-size:24px;">📊 Reports</div>
+      <div class="field" style="margin-top:14px;">
+        <label for="rep-month">MAHINA CHUNEIN</label>
+        <input type="month" id="rep-month" />
+      </div>
+      <div id="report-body"></div>
+
+      <h3 class="secttl">📅 Hafta-war Bachat — Pichle 4 Haftay</h3>
+      <div class="card3d" id="weeks-body"></div>
+    </section>
+
+    <!-- ================= SETTINGS ================= -->
+    <section class="view" id="view-settings">
+      <div class="monthline" style="font-size:24px;">⚙️ Settings</div>
+
+      <div class="card3d" style="margin-top:16px;">
+        <div class="field">
+          <label for="set-budget">MAHANA BUDGET (Rs)</label>
+          <input type="number" inputmode="numeric" min="0" id="set-budget" placeholder="Masalan: 80000" />
+        </div>
+        <button class="btn3d btn-rose" id="btn-save-budget">Budget Save Karein</button>
+      </div>
+
+      <div class="card3d" style="margin-top:16px;">
+        <div class="field">
+          <label for="set-goal">BACHAT KA HADAF — HAR MAHINE (Rs)</label>
+          <input type="number" inputmode="numeric" min="0" id="set-goal" placeholder="Masalan: 20000" />
+        </div>
+        <div class="bar"><i id="goal-fill" style="width:0%"></i></div>
+        <div style="font-size:14px; font-weight:800; color:var(--ink-soft); margin:8px 0 14px;" id="goal-line">Hadaf set nahi hai</div>
+        <button class="btn3d btn-rose" id="btn-save-goal">Hadaf Save Karein</button>
+      </div>
+
+      <div class="card3d" style="margin-top:16px;">
+        <div class="field">
+          <label for="set-wgoal">HAFTA-WAR BACHAT KA HADAF (Rs)</label>
+          <input type="number" inputmode="numeric" min="0" id="set-wgoal" placeholder="Masalan: 5000" />
+        </div>
+        <div class="bar"><i id="wgoal-fill" style="width:0%"></i></div>
+        <div style="font-size:14px; font-weight:800; color:var(--ink-soft); margin:8px 0 14px;" id="wgoal-line">Hadaf set nahi hai</div>
+        <button class="btn3d btn-rose" id="btn-save-wgoal">Hadaf Save Karein</button>
+      </div>
+
+      <p class="save-note">Aap ka hisab isi phone ke browser mein mehfooz rehta hai.</p>
+    </section>
+  </div>
+
+  <!-- ================= NAV ================= -->
+  <nav class="nav" id="main-nav">
+    <button data-tab="home" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>Home</button>
+    <button data-tab="kharcha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-2-1.5L14 22l-2-1.5L10 22l-2-1.5L6 22z"/><path d="M9 7h6M9 11h6"/></svg>Kharcha</button>
+    <button data-tab="bills"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg>Bills</button>
+    <button data-tab="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Reports</button>
+    <button data-tab="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19 12a7 7 0 0 0-.14-1.4l2-1.55-2-3.46-2.36.95a7 7 0 0 0-2.42-1.4L13.7 2.6h-3.4l-.38 2.54a7 7 0 0 0-2.42 1.4l-2.36-.95-2 3.46 2 1.55a7 7 0 0 0 0 2.8l-2 1.55 2 3.46 2.36-.95a7 7 0 0 0 2.42 1.4l.38 2.54h3.4l.38-2.54a7 7 0 0 0 2.42-1.4l2.36.95 2-3.46-2-1.55c.09-.45.14-.92.14-1.4z"/></svg>Settings</button>
+  </nav>
+
+  <!-- ================= SHEETS ================= -->
+  <div class="scrim" id="scrim"></div>
+
+  <div class="sheet" id="sheet-expense" role="dialog" aria-modal="true">
+    <button class="iconbtn x" data-close>✕</button>
+    <h3 id="exp-sheet-title">＋ Naya Kharcha</h3>
+    <div class="field" id="exp-amt-field">
+      <label for="exp-amount">RAQAM (Rs)</label>
+      <input class="amount" type="number" inputmode="numeric" min="0" id="exp-amount" placeholder="0" />
+      <div class="err">Raqam likhein.</div>
+    </div>
+    <div class="field">
+      <label>CHEez / CATEGORY</label>
+      <div class="chiprow" id="exp-cats"></div>
+    </div>
+    <div class="field">
+      <label for="exp-date">TAREEKH</label>
+      <input type="date" id="exp-date" />
+    </div>
+    <div class="field">
+      <label for="exp-note">NOTE (agar chahen)</label>
+      <input type="text" id="exp-note" placeholder="Masalan: bazaar se ration" />
+    </div>
+    <button class="btn3d btn-rose" id="btn-save-expense">Kharcha Save Karein</button>
+  </div>
+
+  <div class="sheet" id="sheet-income" role="dialog" aria-modal="true">
+    <button class="iconbtn x" data-close>✕</button>
+    <h3 id="inc-sheet-title">＋ Aamdani Add Karein</h3>
+    <div class="field" id="inc-amt-field">
+      <label for="inc-amount">RAQAM (Rs)</label>
+      <input class="amount" type="number" inputmode="numeric" min="0" id="inc-amount" placeholder="0" />
+      <div class="err">Raqam likhein.</div>
+    </div>
+    <div class="field">
+      <label>ZARIA (SOURCE)</label>
+      <div class="chiprow" id="inc-sources"></div>
+    </div>
+    <div class="field">
+      <label for="inc-date">TAREEKH</label>
+      <input type="date" id="inc-date" />
+    </div>
+    <div class="field">
+      <label for="inc-note">NOTE (agar chahen)</label>
+      <input type="text" id="inc-note" placeholder="" />
+    </div>
+    <button class="btn3d btn-green" id="btn-save-income">Aamdani Save Karein</button>
+  </div>
+
+  <div class="sheet" id="sheet-sadqa" role="dialog" aria-modal="true">
+    <button class="iconbtn x" data-close>✕</button>
+    <h3 id="sad-sheet-title">🤲 Sadqa Add Karein</h3>
+    <div class="field" id="sad-amt-field">
+      <label for="sad-amount">SADQE KI RAQAM (Rs)</label>
+      <input class="amount" type="number" inputmode="numeric" min="0" id="sad-amount" placeholder="0" />
+      <div class="err">Raqam likhein.</div>
+    </div>
+    <div class="field">
+      <label for="sad-date">TAREEKH</label>
+      <input type="date" id="sad-date" />
+    </div>
+    <div class="field">
+      <label for="sad-note">NOTE (agar chahen)</label>
+      <input type="text" id="sad-note" placeholder="Masalan: ghareeb ko khana" />
+    </div>
+    <button class="btn3d btn-gold" id="btn-save-sadqa">Sadqa Save Karein</button>
+  </div>
+
+  <div class="sheet" id="sheet-bill" role="dialog" aria-modal="true">
+    <button class="iconbtn x" data-close>✕</button>
+    <h3 id="bill-sheet-title">＋ Bill Add Karein</h3>
+    <div class="field">
+      <label>BILL KA NAAM</label>
+      <div class="chiprow" id="bill-presets"></div>
+    </div>
+    <div class="field">
+      <input type="text" id="bill-name" placeholder="Bill ka naam likhein" style="min-height:52px;" />
+    </div>
+    <div class="field" id="bill-amt-field">
+      <label for="bill-amount">HAR MAHINE KI RAQAM (Rs)</label>
+      <input class="amount" type="number" inputmode="numeric" min="0" id="bill-amount" placeholder="0" />
+      <div class="err">Raqam likhein.</div>
+    </div>
+    <div class="field">
+      <label for="bill-due">LAST DATE (mahine ki tareekh)</label>
+      <select id="bill-due"></select>
+    </div>
+    <button class="btn3d btn-rose" id="btn-save-bill">Bill Save Karein</button>
+  </div>
+
+  <div class="sheet" id="sheet-fixed" role="dialog" aria-modal="true">
+    <button class="iconbtn x" data-close>✕</button>
+    <h3 id="fix-sheet-title">＋ Lazmi Kharcha</h3>
+    <div class="field">
+      <label>NAAM</label>
+      <div class="chiprow" id="fix-presets"></div>
+    </div>
+    <div class="field">
+      <input type="text" id="fix-name" placeholder="Kharchay ka naam likhein" style="min-height:52px;" />
+    </div>
+    <div class="field" id="fix-amt-field">
+      <label for="fix-amount">HAR MAHINE KI RAQAM (Rs) *</label>
+      <input class="amount" type="number" inputmode="numeric" min="0" id="fix-amount" placeholder="0" />
+      <div class="err">Raqam likhein — baghair raqam ke save nahi hoga.</div>
+    </div>
+    <div class="field">
+      <label for="fix-cat">CATEGORY (kharcha kis hisab mein jaye)</label>
+      <select id="fix-cat"></select>
+    </div>
+    <button class="btn3d btn-rose" id="btn-save-fixed">Lazmi Kharcha Save Karein</button>
+  </div>
+
+  <div class="sheet" id="sheet-confirm" role="dialog" aria-modal="true">
+    <div class="confirmbox">
+      <div style="font-size:40px;">🗑️</div>
+      <p id="confirm-txt">Ye entry delete kar dein?</p>
+      <div class="row">
+        <button class="btn3d btn-ghost" data-close>Nahi, Rehne Dein</button>
+        <button class="btn3d btn-red" id="btn-confirm-yes">Haan, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SETUP ================= -->
+  <div class="setupwrap" id="setup">
+    <div class="setupcard">
+      <div style="font-size:44px;">🏠</div>
+      <h2>Khush Aamdeed!<br />Ghar ka hisab ab asaan.</h2>
+      <p>Bas 3 chhoti cheezein bata dein — phir aap ka roz ka kharcha, bills aur bachat sab ek jagah mehfooz rahe ga.</p>
+      <div class="dots"><i id="dot1" class="on"></i><i id="dot2"></i><i id="dot3"></i></div>
+
+      <div class="panel setupstep on" id="step1">
+        <h3 style="font-size:19px; font-weight:900;">Step 1 — Mahana Aamdani</h3>
+        <p style="color:var(--ink-soft); font-size:14.5px;">Har mahine ghar mein kul kitni aamdani aati hai?</p>
+        <div class="field" id="su-inc-field">
+          <label>TANKHWAH / AAMDANI (Rs)</label>
+          <input class="amount" type="number" inputmode="numeric" min="0" id="su-income" placeholder="0" />
+          <div class="err">Raqam likhein.</div>
+        </div>
+        <div class="field">
+          <label>ZARIA</label>
+          <div class="chiprow" id="su-sources"></div>
+        </div>
+        <button class="btn3d btn-rose" id="btn-su-1">Aagay →</button>
+      </div>
+
+      <div class="panel setupstep" id="step2">
+        <h3 style="font-size:19px; font-weight:900;">Step 2 — Mahana Budget</h3>
+        <p style="color:var(--ink-soft); font-size:14.5px;">Ek mahine mein kharcha kitne tak rakhna chahti hain? Budget khatam honay par app bata de gi.</p>
+        <div class="field" id="su-bud-field">
+          <label>MAHANA BUDGET (Rs)</label>
+          <input class="amount" type="number" inputmode="numeric" min="0" id="su-budget" placeholder="0" />
+          <div class="err">Raqam likhein.</div>
+        </div>
+        <button class="btn3d btn-rose" id="btn-su-2">Aagay →</button>
+        <button class="skiplink" id="btn-su-back1">← Peeche</button>
+      </div>
+
+      <div class="panel setupstep" id="step3">
+        <h3 style="font-size:19px; font-weight:900;">Step 3 — Pehla Kharcha</h3>
+        <p style="color:var(--ink-soft); font-size:14.5px;">Agar aaj koi kharcha hua hai to likh dein — nahi to skip kar dein, baad mein bhi add ho sakta hai.</p>
+        <div class="field">
+          <label>RAQAM (Rs)</label>
+          <input class="amount" type="number" inputmode="numeric" min="0" id="su-exp-amount" placeholder="0" />
+        </div>
+        <div class="field">
+          <label>CATEGORY</label>
+          <div class="chiprow" id="su-cats"></div>
+        </div>
+        <button class="btn3d btn-green" id="btn-su-3">🎉 Shuru Karein</button>
+        <button class="skiplink" id="btn-su-skip">Skip karein — pehla kharcha baad mein</button>
+        <button class="skiplink" id="btn-su-back2">← Peeche</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+  "use strict";
+  /* ================= DATA ================= */
+  var LS_KEY = "gharKharchaLive.v1";
+
+  var CATEGORIES = [
+    { name: "Ration/Kirana",   icon: "🛒" },
+    { name: "Sabzi & Phal",    icon: "🥦" },
+    { name: "Doodh/Dahi",      icon: "🥛" },
+    { name: "Bijli Bill",      icon: "💡" },
+    { name: "Gas Bill",        icon: "🔥" },
+    { name: "Pani Bill",       icon: "💧" },
+    { name: "Mobile Recharge", icon: "📱" },
+    { name: "Kiraya",          icon: "🏠" },
+    { name: "Bachon ki Fees",  icon: "🎒" },
+    { name: "Dawai/Sehat",     icon: "💊" },
+    { name: "Kapray",          icon: "👕" },
+    { name: "Transport",       icon: "🚌" },
+    { name: "Mehman/Dawat",    icon: "🍽️" },
+    { name: "Ghar ka Saman",   icon: "🧺" },
+    { name: "Bachat",          icon: "🐷" },
+    { name: "Doosra",          icon: "📦" }
+  ];
+  var SOURCES = [
+    { name: "Shohar ki Tankhwah", icon: "💼" },
+    { name: "Karobar",            icon: "🏪" },
+    { name: "Doosri Aamdani",     icon: "💰" }
+  ];
+  var BILL_PRESETS = ["Bijli Bill", "Gas Bill", "Pani Bill", "Ghar ka Kiraya", "Bachon ki Fees", "Internet", "TV Cable"];
+  var FIXED_PRESETS = [
+    { name: "Bachon ki School Fees", icon: "🎒", cat: "Bachon ki Fees" },
+    { name: "Tuition Fees",          icon: "📚", cat: "Bachon ki Fees" },
+    { name: "Van ka Kiraya",         icon: "🚐", cat: "Transport" },
+    { name: "Ghar ka Kiraya",        icon: "🏠", cat: "Kiraya" },
+    { name: "Doodh ka Kharcha",      icon: "🥛", cat: "Doodh/Dahi" }
+  ];
+  var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  function blankState(){
+    return {
+      setupDone: false,
+      settings: { budget: 0, savingsGoal: 0, weeklyGoal: 0 },
+      expenses: [], incomes: [], sadqa: [], bills: [], fixed: []
+    };
+  }
+  var S = blankState();
+  try {
+    var raw = localStorage.getItem(LS_KEY);
+    if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed === "object") S = Object.assign(blankState(), parsed); }
+  } catch (e) { S = blankState(); }
+  function save(){ try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {} }
+
+  /* ================= HELPERS ================= */
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]; }); }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function rs(n){ n = Math.round(Number(n) || 0); return "Rs " + n.toLocaleString("en-US"); }
+  function pad(n){ return (n < 10 ? "0" : "") + n; }
+  function dstr(d){ return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function todayStr(){ return dstr(new Date()); }
+  function parseD(s){ var p = String(s).split("-"); return new Date(+p[0], (+p[1]) - 1, +p[2]); }
+  function mkOf(s){ return String(s).slice(0, 7); }
+  function curMK(){ return mkOf(todayStr()); }
+  function monthLabel(mk){ var p = mk.split("-"); return MONTHS[(+p[1]) - 1] + " " + p[0]; }
+  function fmtDate(s){ var d = parseD(s); return d.getDate() + " " + MONTHS_SHORT[d.getMonth()] + " " + d.getFullYear(); }
+  function fmtShort(d){ return d.getDate() + " " + MONTHS_SHORT[d.getMonth()]; }
+  function catIcon(name){ for (var i = 0; i < CATEGORIES.length; i++) if (CATEGORIES[i].name === name) return CATEGORIES[i].icon; return "📦"; }
+  function srcIcon(name){ for (var i = 0; i < SOURCES.length; i++) if (SOURCES[i].name === name) return SOURCES[i].icon; return "💰"; }
+  function sumArr(arr){ var t = 0; for (var i = 0; i < arr.length; i++) t += Number(arr[i].amount) || 0; return t; }
+  function expInMonth(mk){ return S.expenses.filter(function(e){ return mkOf(e.date) === mk; }); }
+  function incInMonth(mk){ return S.incomes.filter(function(e){ return mkOf(e.date) === mk; }); }
+  function sadInMonth(mk){ return S.sadqa.filter(function(e){ return mkOf(e.date) === mk; }); }
+  function weekRange(offset){
+    var now = new Date(); now.setHours(0,0,0,0);
+    var dow = (now.getDay() + 6) % 7; /* Monday = 0 */
+    var start = new Date(now); start.setDate(now.getDate() - dow + offset * 7);
+    var end = new Date(start); end.setDate(start.getDate() + 6);
+    return { start: start, end: end, startStr: dstr(start), endStr: dstr(end) };
+  }
+  function inRange(dateStr, r){ return dateStr >= r.startStr && dateStr <= r.endStr; }
+  function weekBachat(offset){
+    var r = weekRange(offset);
+    var inc = sumArr(S.incomes.filter(function(e){ return inRange(e.date, r); }));
+    var exp = sumArr(S.expenses.filter(function(e){ return inRange(e.date, r); }));
+    return { range: r, income: inc, expense: exp, bachat: inc - exp };
+  }
+  var toastTimer = null;
+  function toast(msg){
+    var t = $("toast"); t.textContent = msg; t.classList.add("on");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove("on"); }, 2600);
+  }
+
+  /* ================= SHEETS ================= */
+  var openSheetEl = null;
+  function openSheet(id){
+    closeSheets();
+    openSheetEl = $(id);
+    $("scrim").classList.add("on");
+    openSheetEl.classList.add("on");
+  }
+  function closeSheets(){
+    var sheets = document.querySelectorAll(".sheet");
+    for (var i = 0; i < sheets.length; i++) sheets[i].classList.remove("on");
+    $("scrim").classList.remove("on");
+    openSheetEl = null;
+  }
+  $("scrim").addEventListener("click", closeSheets);
+  var closers = document.querySelectorAll("[data-close]");
+  for (var ci = 0; ci < closers.length; ci++) closers[ci].addEventListener("click", closeSheets);
+
+  /* chip group builder: returns get/set */
+  function chipGroup(containerId, items, initial){
+    var box = $(containerId), sel = initial;
+    function draw(){
+      box.innerHTML = "";
+      items.forEach(function(it){
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "chip" + (sel === it.name ? " sel" : "");
+        b.textContent = (it.icon ? it.icon + " " : "") + it.name;
+        b.addEventListener("click", function(){ sel = it.name; draw(); });
+        box.appendChild(b);
+      });
+    }
+    draw();
+    return { get: function(){ return sel; }, set: function(v){ sel = v; draw(); } };
+  }
+
+  /* ================= NAV ================= */
+  var curTab = "home";
+  function switchTab(tab){
+    curTab = tab;
+    var views = document.querySelectorAll(".view");
+    for (var i = 0; i < views.length; i++) views[i].classList.toggle("on", views[i].id === "view-" + tab);
+    var btns = document.querySelectorAll("#main-nav button");
+    for (var j = 0; j < btns.length; j++) btns[j].classList.toggle("on", btns[j].getAttribute("data-tab") === tab);
+    window.scrollTo(0, 0);
+    renderAll();
+  }
+  var navBtns = document.querySelectorAll("#main-nav button");
+  for (var ni = 0; ni < navBtns.length; ni++){
+    navBtns[ni].addEventListener("click", function(){ switchTab(this.getAttribute("data-tab")); });
+  }
+
+  /* ================= DELETE CONFIRM ================= */
+  var pendingDelete = null; /* {type, id} */
+  function askDelete(type, id, label){
+    pendingDelete = { type: type, id: id };
+    $("confirm-txt").textContent = "“" + label + "” delete kar dein? Ye wapas nahi aaye ga.";
+    openSheet("sheet-confirm");
+  }
+  $("btn-confirm-yes").addEventListener("click", function(){
+    if (!pendingDelete) return;
+    var t = pendingDelete.type, id = pendingDelete.id;
+    if (t === "expense") S.expenses = S.expenses.filter(function(e){ return e.id !== id; });
+    if (t === "income")  S.incomes  = S.incomes.filter(function(e){ return e.id !== id; });
+    if (t === "sadqa")   S.sadqa    = S.sadqa.filter(function(e){ return e.id !== id; });
+    if (t === "bill")    S.bills    = S.bills.filter(function(e){ return e.id !== id; });
+    if (t === "fixed")   S.fixed    = S.fixed.filter(function(e){ return e.id !== id; });
+    pendingDelete = null;
+    save(); closeSheets(); renderAll();
+    toast("🗑️ Delete ho gaya");
+  });
+  function trashBtn(type, id, label){
+    var b = document.createElement("button");
+    b.className = "iconbtn"; b.type = "button"; b.setAttribute("aria-label", "Delete");
+    b.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15M10 11v6M14 11v6"/></svg>';
+    b.addEventListener("click", function(ev){ ev.stopPropagation(); askDelete(type, id, label); });
+    return b;
+  }
+
+  /* ================= EXPENSE SHEET ================= */
+  var expCats = chipGroup("exp-cats", CATEGORIES, "Ration/Kirana");
+  var editExpenseId = null;
+  function openExpense(edit){
+    editExpenseId = edit ? edit.id : null;
+    $("exp-sheet-title").textContent = edit ? "✏️ Kharcha Badlein" : "＋ Naya Kharcha";
+    $("exp-amount").value = edit ? edit.amount : "";
+    expCats.set(edit ? edit.category : "Ration/Kirana");
+    $("exp-date").value = edit ? edit.date : todayStr();
+    $("exp-note").value = edit ? (edit.note || "") : "";
+    $("exp-amt-field").classList.remove("invalid");
+    openSheet("sheet-expense");
+  }
+  $("btn-save-expense").addEventListener("click", function(){
+    var amt = parseFloat($("exp-amount").value);
+    if (!amt || amt <= 0){ $("exp-amt-field").classList.add("invalid"); $("exp-amount").focus(); return; }
+    var data = { amount: amt, category: expCats.get(), date: $("exp-date").value || todayStr(), note: $("exp-note").value.trim() };
+    if (editExpenseId){
+      S.expenses = S.expenses.map(function(e){ return e.id === editExpenseId ? Object.assign({}, e, data) : e; });
+      toast("✅ Kharcha update ho gaya");
+    } else {
+      S.expenses.unshift(Object.assign({ id: uid() }, data));
+      toast("✅ Kharcha add ho gaya");
+    }
+    save(); closeSheets(); renderAll();
+  });
+
+  /* ================= INCOME SHEET ================= */
+  var incSrcs = chipGroup("inc-sources", SOURCES, "Shohar ki Tankhwah");
+  var editIncomeId = null;
+  function openIncome(edit){
+    editIncomeId = edit ? edit.id : null;
+    $("inc-sheet-title").textContent = edit ? "✏️ Aamdani Badlein" : "＋ Aamdani Add Karein";
+    $("inc-amount").value = edit ? edit.amount : "";
+    incSrcs.set(edit ? edit.source : "Shohar ki Tankhwah");
+    $("inc-date").value = edit ? edit.date : todayStr();
+    $("inc-note").value = edit ? (edit.note || "") : "";
+    $("inc-amt-field").classList.remove("invalid");
+    openSheet("sheet-income");
+  }
+  $("btn-save-income").addEventListener("click", function(){
+    var amt = parseFloat($("inc-amount").value);
+    if (!amt || amt <= 0){ $("inc-amt-field").classList.add("invalid"); $("inc-amount").focus(); return; }
+    var data = { amount: amt, source: incSrcs.get(), date: $("inc-date").value || todayStr(), note: $("inc-note").value.trim() };
+    if (editIncomeId){
+      S.incomes = S.incomes.map(function(e){ return e.id === editIncomeId ? Object.assign({}, e, data) : e; });
+      toast("✅ Aamdani update ho gayi");
+    } else {
+      S.incomes.unshift(Object.assign({ id: uid() }, data));
+      toast("✅ Aamdani add ho gayi");
+    }
+    save(); closeSheets(); renderAll();
+  });
+
+  /* ================= SADQA SHEET ================= */
+  var editSadqaId = null;
+  function openSadqa(edit){
+    editSadqaId = edit ? edit.id : null;
+    $("sad-sheet-title").textContent = edit ? "✏️ Sadqa Badlein" : "🤲 Sadqa Add Karein";
+    $("sad-amount").value = edit ? edit.amount : "";
+    $("sad-date").value = edit ? edit.date : todayStr();
+    $("sad-note").value = edit ? (edit.note || "") : "";
+    $("sad-amt-field").classList.remove("invalid");
+    openSheet("sheet-sadqa");
+  }
+  $("btn-save-sadqa").addEventListener("click", function(){
+    var amt = parseFloat($("sad-amount").value);
+    if (!amt || amt <= 0){ $("sad-amt-field").classList.add("invalid"); $("sad-amount").focus(); return; }
+    var data = { amount: amt, date: $("sad-date").value || todayStr(), note: $("sad-note").value.trim() };
+    if (editSadqaId){
+      S.sadqa = S.sadqa.map(function(e){ return e.id === editSadqaId ? Object.assign({}, e, data) : e; });
+      toast("🤲 Sadqa update ho gaya — Allah qabool farmaye");
+    } else {
+      S.sadqa.unshift(Object.assign({ id: uid() }, data));
+      toast("🤲 Sadqa add ho gaya — Allah qabool farmaye");
+    }
+    save(); closeSheets(); renderAll();
+  });
+
+  /* ================= BILL SHEET ================= */
+  var editBillId = null;
+  (function buildBillBits(){
+    var due = $("bill-due");
+    for (var d = 1; d <= 31; d++){ var o = document.createElement("option"); o.value = d; o.textContent = d + " tareekh"; due.appendChild(o); }
+    due.value = "10";
+    var box = $("bill-presets");
+    BILL_PRESETS.forEach(function(name){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip"; b.textContent = name;
+      b.addEventListener("click", function(){
+        $("bill-name").value = name;
+        var sel = box.querySelectorAll(".chip");
+        for (var i = 0; i < sel.length; i++) sel[i].classList.toggle("sel", sel[i] === b);
+      });
+      box.appendChild(b);
+    });
+  })();
+  function openBill(edit){
+    editBillId = edit ? edit.id : null;
+    $("bill-sheet-title").textContent = edit ? "✏️ Bill Badlein" : "＋ Bill Add Karein";
+    $("bill-name").value = edit ? edit.name : "";
+    $("bill-amount").value = edit ? edit.amount : "";
+    $("bill-due").value = edit ? edit.dueDay : "10";
+    $("bill-amt-field").classList.remove("invalid");
+    openSheet("sheet-bill");
+  }
+  $("btn-save-bill").addEventListener("click", function(){
+    var name = $("bill-name").value.trim();
+    var amt = parseFloat($("bill-amount").value);
+    if (!name){ $("bill-name").focus(); toast("Bill ka naam likhein"); return; }
+    if (!amt || amt <= 0){ $("bill-amt-field").classList.add("invalid"); $("bill-amount").focus(); return; }
+    var data = { name: name, amount: amt, dueDay: parseInt($("bill-due").value, 10) || 1 };
+    if (editBillId){
+      S.bills = S.bills.map(function(b){ return b.id === editBillId ? Object.assign({}, b, data) : b; });
+      toast("✅ Bill update ho gaya");
+    } else {
+      S.bills.push(Object.assign({ id: uid(), paidMonths: {} }, data));
+      toast("✅ Bill add ho gaya");
+    }
+    save(); closeSheets(); renderAll();
+  });
+
+  /* ================= FIXED (LAZMI) SHEET ================= */
+  var editFixedId = null;
+  (function buildFixedBits(){
+    var selEl = $("fix-cat");
+    CATEGORIES.forEach(function(c){ var o = document.createElement("option"); o.value = c.name; o.textContent = c.icon + " " + c.name; selEl.appendChild(o); });
+    function presetChips(boxId, onTap){
+      var box = $(boxId);
+      FIXED_PRESETS.forEach(function(p){
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "chip"; b.textContent = p.icon + " " + p.name;
+        b.addEventListener("click", function(){ onTap(p); });
+        box.appendChild(b);
+      });
+    }
+    /* chips inside the Bills tab card: open the sheet pre-filled, amount pulses */
+    presetChips("fixed-presets", function(p){ openFixed(null, p); });
+    /* chips inside the sheet itself: just fill the form */
+    presetChips("fix-presets", function(p){
+      $("fix-name").value = p.name;
+      $("fix-cat").value = p.cat;
+      pulseAmount();
+    });
+  })();
+  function pulseAmount(){
+    var a = $("fix-amount");
+    a.classList.remove("pulse"); void a.offsetWidth; a.classList.add("pulse");
+    a.focus();
+  }
+  function openFixed(edit, preset){
+    editFixedId = edit ? edit.id : null;
+    $("fix-sheet-title").textContent = edit ? "✏️ Lazmi Kharcha Badlein" : "＋ Lazmi Kharcha";
+    $("fix-name").value = edit ? edit.name : (preset ? preset.name : "");
+    $("fix-amount").value = edit ? edit.amount : "";
+    $("fix-cat").value = edit ? edit.category : (preset ? preset.cat : "Doosra");
+    $("fix-amt-field").classList.remove("invalid");
+    openSheet("sheet-fixed");
+    if (preset && !edit) setTimeout(pulseAmount, 300);
+  }
+  $("btn-save-fixed").addEventListener("click", function(){
+    var name = $("fix-name").value.trim();
+    var amt = parseFloat($("fix-amount").value);
+    if (!name){ $("fix-name").focus(); toast("Kharchay ka naam likhein"); return; }
+    if (!amt || amt <= 0){ $("fix-amt-field").classList.add("invalid"); pulseAmount(); return; }
+    var data = { name: name, amount: amt, category: $("fix-cat").value };
+    if (editFixedId){
+      S.fixed = S.fixed.map(function(f){ return f.id === editFixedId ? Object.assign({}, f, data) : f; });
+      toast("✅ Lazmi kharcha update ho gaya");
+    } else {
+      S.fixed.push(Object.assign({ id: uid(), addedMonths: {} }, data));
+      toast("✅ Lazmi kharcha save ho gaya");
+    }
+    save(); closeSheets(); renderAll();
+  });
+
+  /* tankhwah one-tap */
+  $("btn-tankhwah").addEventListener("click", function(){
+    var mk = curMK(), added = 0, total = 0;
+    S.fixed.forEach(function(f){
+      if (!f.addedMonths[mk]){
+        S.expenses.unshift({ id: uid(), amount: f.amount, category: f.category, date: todayStr(), note: "Lazmi kharcha: " + f.name });
+        f.addedMonths[mk] = true; added++; total += Number(f.amount) || 0;
+      }
+    });
+    if (added === 0){ toast("Is mahine ke sab lazmi kharchay pehle hi add hain ✅"); return; }
+    save(); renderAll();
+    toast("🎉 " + added + " lazmi kharchay add ho gaye — kul " + rs(total));
+  });
+
+  /* ================= RENDER: HOME ================= */
+  function renderHome(){
+    var mk = curMK();
+    var inc = sumArr(incInMonth(mk)), exp = sumArr(expInMonth(mk));
+    var bachat = inc - exp;
+    $("home-month").textContent = monthLabel(mk);
+    $("hero-bachat").textContent = rs(bachat);
+    $("hero-sub").textContent = "Aamdani " + rs(inc) + " − Kharcha " + rs(exp);
+    var budget = Number(S.settings.budget) || 0;
+    $("budget-line").textContent = rs(exp) + " / " + (budget > 0 ? rs(budget) : "set nahi");
+    var pct = budget > 0 ? Math.min(100, (exp / budget) * 100) : 0;
+    var fill = $("budget-fill");
+    fill.style.width = pct + "%";
+    fill.className = pct >= 100 ? "red" : (pct >= 80 ? "amber" : "");
+    $("warn-80").className = "warn amber" + (budget > 0 && pct >= 80 && pct < 100 ? " show" : "");
+    $("warn-100").className = "warn red" + (budget > 0 && pct >= 100 ? " show" : "");
+
+    $("stat-income").textContent = rs(inc);
+    $("stat-expense").textContent = rs(exp);
+    var todayExp = sumArr(S.expenses.filter(function(e){ return e.date === todayStr(); }));
+    $("stat-today").textContent = rs(todayExp);
+    $("stat-today-date").textContent = fmtDate(todayStr());
+
+    var wk = weekBachat(0);
+    $("stat-week").textContent = rs(wk.bachat);
+    $("stat-week").style.color = wk.bachat < 0 ? "var(--red)" : "var(--green)";
+    $("stat-week-range").textContent = fmtShort(wk.range.start) + " – " + fmtShort(wk.range.end);
+    $("week-bachat-big").textContent = rs(wk.bachat);
+    $("week-bachat-big").style.color = wk.bachat < 0 ? "var(--red)" : "var(--green)";
+    $("week-bachat-detail").textContent = "Aamdani " + rs(wk.income) + " − Kharcha " + rs(wk.expense) + " · " + fmtShort(wk.range.start) + " – " + fmtShort(wk.range.end);
+    var wgoal = Number(S.settings.weeklyGoal) || 0;
+    if (wgoal > 0){
+      var wpct = Math.max(0, Math.min(100, (wk.bachat / wgoal) * 100));
+      $("week-goal-fill").style.width = wpct + "%";
+      $("week-goal-fill").className = wk.bachat < 0 ? "red" : "";
+      $("week-goal-line").textContent = "Hafta-war hadaf: " + rs(wgoal) + " — " + Math.round(wpct) + "% pura" + (wk.bachat >= wgoal ? " 🎉 Mubarak!" : "");
+    } else {
+      $("week-goal-fill").style.width = "0%";
+      $("week-goal-line").textContent = "Hafta-war hadaf set nahi hai — Settings se set karein";
+    }
+
+    /* lazmi reminder */
+    var pending = S.fixed.filter(function(f){ return !f.addedMonths[mk]; });
+    if (pending.length){
+      $("lazmi-remind").style.display = "block";
+      $("lazmi-remind-txt").textContent = pending.length + " lazmi kharchay is mahine abhi add nahi hue — kul " + rs(sumArr(pending)) + ". Tankhwah aate hi Bills tab se ek tap mein add kar dein.";
+    } else { $("lazmi-remind").style.display = "none"; }
+
+    /* top 3 categories */
+    var byCat = {};
+    expInMonth(mk).forEach(function(e){ byCat[e.category] = (byCat[e.category] || 0) + (Number(e.amount) || 0); });
+    var cats = Object.keys(byCat).sort(function(a, b){ return byCat[b] - byCat[a]; }).slice(0, 3);
+    var box = $("top-cats");
+    if (!cats.length){ box.innerHTML = '<div class="empty">Is mahine abhi koi kharcha nahi</div>'; }
+    else {
+      var max = byCat[cats[0]];
+      box.innerHTML = cats.map(function(c){
+        return '<div class="topcat"><span style="font-size:22px;">' + catIcon(c) + '</span><span class="nm">' + esc(c) + '</span>' +
+          '<span class="trk"><span class="bar"><i style="width:' + Math.round((byCat[c] / max) * 100) + '%"></i></span></span>' +
+          '<span class="amt">' + rs(byCat[c]) + '</span></div>';
+      }).join("");
+    }
+
+    /* sadqa */
+    $("sadqa-month").textContent = rs(sumArr(sadInMonth(mk)));
+    $("sadqa-total").textContent = rs(sumArr(S.sadqa));
+  }
+
+  /* ================= RENDER: KHARCHA TAB ================= */
+  var filterCat = "Sab", searchQ = "";
+  (function buildFilter(){
+    var box = $("exp-filter");
+    var all = [{ name: "Sab", icon: "✨" }].concat(CATEGORIES);
+    all.forEach(function(c){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip" + (filterCat === c.name ? " sel" : "");
+      b.textContent = c.icon + " " + c.name;
+      b.addEventListener("click", function(){
+        filterCat = c.name;
+        var chips = box.querySelectorAll(".chip");
+        for (var i = 0; i < chips.length; i++) chips[i].classList.toggle("sel", chips[i] === b);
+        renderKharcha();
+      });
+      box.appendChild(b);
+    });
+  })();
+  $("exp-search").addEventListener("input", function(){ searchQ = this.value.trim().toLowerCase(); renderKharcha(); });
+
+  function entryRow(opts){
+    var row = document.createElement("div");
+    row.className = "entry";
+    row.innerHTML = '<div class="ic">' + opts.icon + '</div><div class="tx"><div class="t1">' + esc(opts.title) + '</div><div class="t2">' + esc(opts.sub) + '</div></div><div class="amt ' + opts.amtClass + '">' + rs(opts.amount) + '</div>';
+    row.appendChild(trashBtn(opts.type, opts.id, opts.title));
+    row.addEventListener("click", opts.onEdit);
+    return row;
+  }
+  function dayLabel(ds){
+    if (ds === todayStr()) return "Aaj";
+    var y = new Date(); y.setDate(y.getDate() - 1);
+    if (ds === dstr(y)) return "Kal";
+    return fmtDate(ds);
+  }
+  function renderKharcha(){
+    var list = $("expense-list");
+    var items = S.expenses.filter(function(e){
+      if (filterCat !== "Sab" && e.category !== filterCat) return false;
+      if (searchQ){
+        var hay = (e.category + " " + (e.note || "")).toLowerCase();
+        if (hay.indexOf(searchQ) === -1) return false;
+      }
+      return true;
+    });
+    items.sort(function(a, b){ return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
+    list.innerHTML = "";
+    if (!items.length){
+      list.innerHTML = '<div class="empty"><span class="big">🧾</span>Koi kharcha nahi mila.<br />Upar walay button se pehla kharcha add karein.</div>';
+    } else {
+      var groups = {}, order = [];
+      items.forEach(function(e){ if (!groups[e.date]){ groups[e.date] = []; order.push(e.date); } groups[e.date].push(e); });
+      order.forEach(function(ds){
+        var g = document.createElement("div"); g.className = "daygroup";
+        var head = document.createElement("div"); head.className = "dhead";
+        head.innerHTML = '<span class="dt">' + dayLabel(ds) + (ds !== todayStr() && dayLabel(ds) !== "Kal" ? "" : ' · <span style="font-weight:700;">' + fmtDate(ds) + '</span>') + '</span><span>' + rs(sumArr(groups[ds])) + '</span>';
+        g.appendChild(head);
+        groups[ds].forEach(function(e){
+          g.appendChild(entryRow({
+            icon: catIcon(e.category), title: e.category, sub: e.note || "—",
+            amount: e.amount, amtClass: "neg", type: "expense", id: e.id,
+            onEdit: (function(en){ return function(){ openExpense(en); }; })(e)
+          }));
+        });
+        list.appendChild(g);
+      });
+    }
+
+    /* incomes */
+    var incBox = $("income-list");
+    $("income-month-total").textContent = "Is mahine: " + rs(sumArr(incInMonth(curMK())));
+    incBox.innerHTML = "";
+    if (!S.incomes.length){
+      incBox.innerHTML = '<div class="empty"><span class="big">💰</span>Abhi koi aamdani darj nahi.</div>';
+    } else {
+      S.incomes.slice().sort(function(a, b){ return a.date < b.date ? 1 : -1; }).forEach(function(e){
+        incBox.appendChild(entryRow({
+          icon: srcIcon(e.source), title: e.source, sub: fmtDate(e.date) + (e.note ? " · " + e.note : ""),
+          amount: e.amount, amtClass: "pos", type: "income", id: e.id,
+          onEdit: (function(en){ return function(){ openIncome(en); }; })(e)
+        }));
+      });
+    }
+
+    /* sadqa */
+    var sadBox = $("sadqa-list");
+    $("sadqa-list-total").textContent = "Kul: " + rs(sumArr(S.sadqa));
+    sadBox.innerHTML = "";
+    if (!S.sadqa.length){
+      sadBox.innerHTML = '<div class="empty"><span class="big">🤲</span>Abhi koi sadqa darj nahi.</div>';
+    } else {
+      S.sadqa.slice().sort(function(a, b){ return a.date < b.date ? 1 : -1; }).forEach(function(e){
+        sadBox.appendChild(entryRow({
+          icon: "🤲", title: "Sadqa", sub: fmtDate(e.date) + (e.note ? " · " + e.note : ""),
+          amount: e.amount, amtClass: "gold", type: "sadqa", id: e.id,
+          onEdit: (function(en){ return function(){ openSadqa(en); }; })(e)
+        }));
+      });
+    }
+  }
+
+  /* ================= RENDER: BILLS TAB ================= */
+  function renderBills(){
+    var mk = curMK();
+    var box = $("bill-list");
+    box.innerHTML = "";
+    if (!S.bills.length){
+      box.innerHTML = '<div class="empty"><span class="big">🧾</span>Abhi koi bill nahi.<br />Bijli, gas, pani waghera ke mahana bills add karein.</div>';
+    } else {
+      S.bills.forEach(function(b){
+        var paid = !!b.paidMonths[mk];
+        var row = document.createElement("div"); row.className = "billrow";
+        row.innerHTML = '<div class="tx"><div class="t1">' + esc(b.name) + '</div><div class="t2">Har mahine · last date: ' + b.dueDay + ' tareekh ' +
+          (paid ? '<span class="badge badge-done">✅ Ada ho gaya</span>' : '<span class="badge badge-due">⏳ Ada nahi hua</span>') + '</div></div>' +
+          '<div class="amt">' + rs(b.amount) + '</div>';
+        var pb = document.createElement("button");
+        pb.className = "paidbtn" + (paid ? " ispaid" : ""); pb.type = "button";
+        pb.textContent = paid ? "✔ Ada" : "Ada Kar Diya";
+        pb.addEventListener("click", function(){
+          b.paidMonths[mk] = !b.paidMonths[mk];
+          save(); renderBills();
+          toast(b.paidMonths[mk] ? "✅ " + b.name + " ada ho gaya" : b.name + " phir se baaki ho gaya");
+        });
+        row.appendChild(pb);
+        row.appendChild(trashBtn("bill", b.id, b.name));
+        row.querySelector(".tx").addEventListener("click", function(){ openBill(b); });
+        row.querySelector(".tx").style.cursor = "pointer";
+        box.appendChild(row);
+      });
+    }
+
+    /* fixed / lazmi */
+    var fbox = $("fixed-list");
+    $("fixed-total").textContent = S.fixed.length ? "Kul: " + rs(sumArr(S.fixed)) + " / mahina" : "";
+    fbox.innerHTML = "";
+    if (!S.fixed.length){
+      fbox.innerHTML = '<div class="empty"><span class="big">📌</span>Abhi koi lazmi kharcha save nahi.<br />Upar kisi naam ko tap kar ke shuru karein — bas raqam likhni hai.</div>';
+    } else {
+      S.fixed.forEach(function(f){
+        var added = !!f.addedMonths[mk];
+        var row = document.createElement("div"); row.className = "billrow";
+        row.innerHTML = '<div class="tx"><div class="t1">' + esc(f.name) + '</div><div class="t2">' + esc(f.category) + ' ' +
+          (added ? '<span class="badge badge-done">✅ Add ho gaya</span>' : '<span class="badge badge-due">⏳ Baaki hai</span>') + '</div></div>' +
+          '<div class="amt">' + rs(f.amount) + '</div>';
+        row.appendChild(trashBtn("fixed", f.id, f.name));
+        row.querySelector(".tx").addEventListener("click", function(){ openFixed(f); });
+        row.querySelector(".tx").style.cursor = "pointer";
+        fbox.appendChild(row);
+      });
+    }
+    var pendingCount = S.fixed.filter(function(f){ return !f.addedMonths[mk]; }).length;
+    var tb = $("btn-tankhwah");
+    if (!S.fixed.length){ tb.disabled = true; tb.textContent = "💵 Pehle lazmi kharchay save karein"; }
+    else if (pendingCount === 0){ tb.disabled = true; tb.textContent = "✅ Is Mahine ke Sab Lazmi Kharchay Add Ho Gaye"; }
+    else { tb.disabled = false; tb.textContent = "💵 Tankhwah Aa Gayi — Sab Lazmi Kharchay Add Karein (" + pendingCount + ")"; }
+  }
+
+  /* ================= RENDER: REPORTS ================= */
+  function renderReports(){
+    var mk = $("rep-month").value || curMK();
+    var exp = expInMonth(mk), inc = sumArr(incInMonth(mk)), expT = sumArr(exp);
+    var pm = mk.split("-"); var prevD = new Date(+pm[0], (+pm[1]) - 1 - 1, 1);
+    var prevMK = prevD.getFullYear() + "-" + pad(prevD.getMonth() + 1);
+    var prevT = sumArr(expInMonth(prevMK));
+
+    var vsHtml;
+    if (prevT > 0){
+      var diff = ((expT - prevT) / prevT) * 100;
+      var up = diff > 0;
+      vsHtml = 'Pichle mahine (' + monthLabel(prevMK) + ') kharcha ' + rs(prevT) + ' tha — is mahine <b class="' + (up ? "up" : "down") + '">' + (up ? "▲" : "▼") + " " + Math.abs(Math.round(diff)) + "% " + (up ? "zyada" : "kam") + '</b>';
+    } else {
+      vsHtml = "Pichle mahine ka koi record nahi — muqabla nahi ho sakta.";
+    }
+
+    var daysInMonth = new Date(+pm[0], +pm[1], 0).getDate();
+    var elapsed = (mk === curMK()) ? new Date().getDate() : daysInMonth;
+    var avg = elapsed > 0 ? Math.round(expT / elapsed) : 0;
+    var biggest = null;
+    exp.forEach(function(e){ if (!biggest || (Number(e.amount) || 0) > (Number(biggest.amount) || 0)) biggest = e; });
+
+    var byCat = {};
+    exp.forEach(function(e){ byCat[e.category] = (byCat[e.category] || 0) + (Number(e.amount) || 0); });
+    var cats = Object.keys(byCat).sort(function(a, b){ return byCat[b] - byCat[a]; });
+    var catHtml = cats.length ? cats.map(function(c){
+      return '<div class="catbar"><div class="r"><span>' + catIcon(c) + " " + esc(c) + '</span><span class="a">' + rs(byCat[c]) + '</span></div>' +
+        '<div class="bar"><i style="width:' + Math.round((byCat[c] / byCat[cats[0]]) * 100) + '%"></i></div></div>';
+    }).join("") : '<div class="empty">Is mahine koi kharcha nahi</div>';
+
+    var insights = [];
+    if (!exp.length){
+      insights.push("🌱 Is mahine abhi koi kharcha darj nahi hua — kharcha add karein to report bhar jaye gi.");
+    } else {
+      if (cats.length) insights.push("🏆 Sab se zyada kharcha <b>" + esc(cats[0]) + "</b> par hua — kul kharche ka " + Math.round((byCat[cats[0]] / expT) * 100) + "%.");
+      if (prevT > 0){
+        var d2 = Math.round(((expT - prevT) / prevT) * 100);
+        insights.push(d2 > 0 ? "📈 Kharcha pichle mahine se " + d2 + "% zyada hai — " + (cats.length ? esc(cats[0]) : "") + " par nazar rakhein." : "📉 Kharcha pichle mahine se " + Math.abs(d2) + "% kam hai — mashaAllah, achi bachat ho rahi hai!");
+      }
+      var mb = inc - expT;
+      insights.push(mb >= 0 ? "🐷 Is mahine ki bachat <b>" + rs(mb) + "</b> hai. Roz ka average kharcha " + rs(avg) + " raha." : "⚠️ Is mahine kharcha aamdani se " + rs(-mb) + " zyada ho gaya hai — agle mahine budget sambhal kar rakhein.");
+    }
+
+    $("report-body").innerHTML =
+      '<div class="grid2" style="margin-top:14px;">' +
+        '<div class="card3d stat"><div class="lbl">💰 AAMDANI</div><div class="val green">' + rs(inc) + '</div></div>' +
+        '<div class="card3d stat"><div class="lbl">🧾 KHARCHA</div><div class="val rose">' + rs(expT) + '</div></div>' +
+      '</div>' +
+      '<div class="card3d" style="margin-top:12px;"><div class="vs">' + vsHtml + '</div>' +
+        '<div style="display:flex; gap:18px; flex-wrap:wrap; margin-top:12px;">' +
+          '<div><div style="font-size:12.5px; font-weight:900; color:var(--ink-soft);">ROZ KA AVERAGE</div><div style="font-size:20px; font-weight:900;">' + rs(avg) + '</div></div>' +
+          '<div><div style="font-size:12.5px; font-weight:900; color:var(--ink-soft);">SAB SE BARA KHARCHA</div><div style="font-size:20px; font-weight:900;">' + (biggest ? rs(biggest.amount) : "—") + '</div>' + (biggest ? '<div style="font-size:13px; color:var(--ink-soft); font-weight:700;">' + esc(biggest.category) + " · " + fmtDate(biggest.date) + '</div>' : "") + '</div>' +
+          '<div><div style="font-size:12.5px; font-weight:900; color:var(--ink-soft);">BACHAT</div><div style="font-size:20px; font-weight:900; color:' + (inc - expT < 0 ? "var(--red)" : "var(--green)") + ';">' + rs(inc - expT) + '</div></div>' +
+        '</div></div>' +
+      '<h3 class="secttl">🏷️ Category-wise Kharcha</h3><div class="card3d">' + catHtml + '</div>' +
+      '<h3 class="secttl">💡 Samajhdari</h3><div class="card3d">' + insights.map(function(t){ return '<div class="insight"><span class="dot">•</span><span>' + t + '</span></div>'; }).join("") + '</div>';
+
+    /* last 4 weeks */
+    var weeks = [0, -1, -2, -3].map(weekBachat);
+    var maxAbs = 1;
+    weeks.forEach(function(w){ maxAbs = Math.max(maxAbs, Math.abs(w.bachat)); });
+    $("weeks-body").innerHTML = weeks.map(function(w, i){
+      var label = (i === 0 ? "Is Hafta" : (i === 1 ? "Pichla Hafta" : "Hafta")) + " · " + fmtShort(w.range.start) + " – " + fmtShort(w.range.end);
+      var wPct = Math.round((Math.abs(w.bachat) / maxAbs) * 100);
+      return '<div class="wkbar"><div class="r"><span>' + label + '</span><span class="a" style="color:' + (w.bachat < 0 ? "var(--red)" : "var(--green)") + '">' + rs(w.bachat) + '</span></div>' +
+        '<div class="bar"><i class="' + (w.bachat < 0 ? "red" : "") + '" style="width:' + wPct + '%"></i></div></div>';
+    }).join("");
+  }
+  $("rep-month").addEventListener("change", renderReports);
+
+  /* ================= RENDER: SETTINGS ================= */
+  function renderSettings(){
+    if (document.activeElement !== $("set-budget")) $("set-budget").value = S.settings.budget || "";
+    if (document.activeElement !== $("set-goal")) $("set-goal").value = S.settings.savingsGoal || "";
+    if (document.activeElement !== $("set-wgoal")) $("set-wgoal").value = S.settings.weeklyGoal || "";
+    var mk = curMK();
+    var mb = sumArr(incInMonth(mk)) - sumArr(expInMonth(mk));
+    var goal = Number(S.settings.savingsGoal) || 0;
+    if (goal > 0){
+      var p = Math.max(0, Math.min(100, (mb / goal) * 100));
+      $("goal-fill").style.width = p + "%";
+      $("goal-fill").className = mb < 0 ? "red" : "";
+      $("goal-line").textContent = "Is mahine ki bachat " + rs(mb) + " / hadaf " + rs(goal) + " — " + Math.round(p) + "%" + (mb >= goal ? " 🎉 Hadaf pura!" : "");
+    } else { $("goal-fill").style.width = "0%"; $("goal-line").textContent = "Hadaf set nahi hai"; }
+    var wk = weekBachat(0), wgoal = Number(S.settings.weeklyGoal) || 0;
+    if (wgoal > 0){
+      var wp = Math.max(0, Math.min(100, (wk.bachat / wgoal) * 100));
+      $("wgoal-fill").style.width = wp + "%";
+      $("wgoal-fill").className = wk.bachat < 0 ? "red" : "";
+      $("wgoal-line").textContent = "Is haftay ki bachat " + rs(wk.bachat) + " / hadaf " + rs(wgoal) + " — " + Math.round(wp) + "%" + (wk.bachat >= wgoal ? " 🎉 Hadaf pura!" : "");
+    } else { $("wgoal-fill").style.width = "0%"; $("wgoal-line").textContent = "Hadaf set nahi hai"; }
+  }
+  $("btn-save-budget").addEventListener("click", function(){
+    S.settings.budget = Math.max(0, parseFloat($("set-budget").value) || 0);
+    save(); renderAll(); toast("✅ Budget save ho gaya");
+  });
+  $("btn-save-goal").addEventListener("click", function(){
+    S.settings.savingsGoal = Math.max(0, parseFloat($("set-goal").value) || 0);
+    save(); renderAll(); toast("✅ Bachat ka hadaf save ho gaya");
+  });
+  $("btn-save-wgoal").addEventListener("click", function(){
+    S.settings.weeklyGoal = Math.max(0, parseFloat($("set-wgoal").value) || 0);
+    save(); renderAll(); toast("✅ Hafta-war hadaf save ho gaya");
+  });
+
+  /* ================= BUTTON WIRING ================= */
+  $("btn-add-expense").addEventListener("click", function(){ openExpense(null); });
+  $("btn-add-expense2").addEventListener("click", function(){ openExpense(null); });
+  $("btn-add-income").addEventListener("click", function(){ openIncome(null); });
+  $("btn-add-income2").addEventListener("click", function(){ openIncome(null); });
+  $("btn-add-sadqa").addEventListener("click", function(){ openSadqa(null); });
+  $("btn-add-sadqa2").addEventListener("click", function(){ openSadqa(null); });
+  $("btn-add-bill").addEventListener("click", function(){ openBill(null); });
+  $("btn-add-fixed").addEventListener("click", function(){ openFixed(null, null); });
+  $("btn-goto-bills").addEventListener("click", function(){ switchTab("bills"); });
+
+  /* ================= SETUP WIZARD ================= */
+  var suSrcs = chipGroup("su-sources", SOURCES, "Shohar ki Tankhwah");
+  var suCats = chipGroup("su-cats", CATEGORIES, "Ration/Kirana");
+  function showStep(n){
+    [1, 2, 3].forEach(function(i){
+      $("step" + i).classList.toggle("on", i === n);
+      $("dot" + i).classList.toggle("on", i === n);
+    });
+  }
+  $("btn-su-1").addEventListener("click", function(){
+    var amt = parseFloat($("su-income").value);
+    if (!amt || amt <= 0){ $("su-inc-field").classList.add("invalid"); $("su-income").focus(); return; }
+    showStep(2);
+  });
+  $("btn-su-back1").addEventListener("click", function(){ showStep(1); });
+  $("btn-su-back2").addEventListener("click", function(){ showStep(2); });
+  $("btn-su-2").addEventListener("click", function(){
+    var amt = parseFloat($("su-budget").value);
+    if (!amt || amt <= 0){ $("su-bud-field").classList.add("invalid"); $("su-budget").focus(); return; }
+    showStep(3);
+  });
+  function finishSetup(){
+    var incAmt = parseFloat($("su-income").value) || 0;
+    if (incAmt > 0) S.incomes.unshift({ id: uid(), amount: incAmt, source: suSrcs.get(), date: todayStr(), note: "Setup — mahana aamdani" });
+    S.settings.budget = Math.max(0, parseFloat($("su-budget").value) || 0);
+    var eAmt = parseFloat($("su-exp-amount").value) || 0;
+    if (eAmt > 0) S.expenses.unshift({ id: uid(), amount: eAmt, category: suCats.get(), date: todayStr(), note: "" });
+    S.setupDone = true;
+    save();
+    $("setup").classList.remove("on");
+    renderAll();
+    toast("🎉 Khush Aamdeed! Aap ka hisab shuru ho gaya");
+  }
+  $("btn-su-3").addEventListener("click", finishSetup);
+  $("btn-su-skip").addEventListener("click", function(){ $("su-exp-amount").value = ""; finishSetup(); });
+
+  /* ================= INIT ================= */
+  function renderAll(){
+    renderHome(); renderKharcha(); renderBills(); renderReports(); renderSettings();
+  }
+  $("rep-month").value = curMK();
+  renderAll();
+  if (!S.setupDone) $("setup").classList.add("on");
+  </script>
+  </body>
+</html>
