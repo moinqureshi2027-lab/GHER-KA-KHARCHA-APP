@@ -436,6 +436,12 @@
         <button class="btn3d btn-rose" id="btn-save-wgoal">Hadaf Save Karein</button>
       </div>
 
+      <div class="card3d" style="margin-top:16px; border:2px solid var(--red);">
+        <div style="font-size:17px; font-weight:900; color:var(--red);">⚠️ Danger Zone</div>
+        <p style="margin:6px 0 12px; font-weight:700; color:var(--ink-soft); font-size:14.5px;">Saara hisab — kharchay, aamdani, bills, lazmi kharchay, sadqa aur settings — hamesha ke liye delete ho jaye ga. App bilkul nayi halat mein wapas chali jaye gi.</p>
+        <button class="btn3d btn-red" id="btn-wipe-all">🗑️ Saara Data Saaf Karo</button>
+      </div>
+
       <p class="save-note">Aap ka hisab isi phone ke browser mein mehfooz rehta hai.</p>
     </section>
   </div>
@@ -461,8 +467,23 @@
       <div class="err">Raqam likhein.</div>
     </div>
     <div class="field">
-      <label>CHEez / CATEGORY</label>
-      <div class="chiprow" id="exp-cats"></div>
+      <label for="exp-cat-select">CHEez / CATEGORY</label>
+      <select id="exp-cat-select"></select>
+    </div>
+    <div class="field" id="exp-billtype-field" style="display:none;">
+      <label for="exp-billtype">بل کی قسم</label>
+      <select id="exp-billtype">
+        <option value="">— بل کی قسم چنیں —</option>
+        <option value="گیس بل">گیس بل</option>
+        <option value="پانی بل">پانی بل</option>
+        <option value="بجلی بل">بجلی بل</option>
+        <option value="نیٹ بل">نیٹ بل</option>
+      </select>
+      <div class="err">بل کی قسم چنیں۔</div>
+    </div>
+    <div class="field">
+      <label for="exp-spender">نام (کس نے خرچ کیا)</label>
+      <input type="text" id="exp-spender" placeholder="Masalan: Ahmed" />
     </div>
     <div class="field">
       <label for="exp-date">TAREEKH</label>
@@ -558,6 +579,17 @@
       <label for="fix-cat">CATEGORY (kharcha kis hisab mein jaye)</label>
       <select id="fix-cat"></select>
     </div>
+    <div class="field" id="fix-billtype-field" style="display:none;">
+      <label for="fix-billtype">بل کی قسم</label>
+      <select id="fix-billtype">
+        <option value="">— بل کی قسم چنیں —</option>
+        <option value="گیس بل">گیس بل</option>
+        <option value="پانی بل">پانی بل</option>
+        <option value="بجلی بل">بجلی بل</option>
+        <option value="نیٹ بل">نیٹ بل</option>
+      </select>
+      <div class="err">بل کی قسم چنیں۔</div>
+    </div>
     <button class="btn3d btn-rose" id="btn-save-fixed">Lazmi Kharcha Save Karein</button>
   </div>
 
@@ -568,6 +600,18 @@
       <div class="row">
         <button class="btn3d btn-ghost" data-close>Nahi, Rehne Dein</button>
         <button class="btn3d btn-red" id="btn-confirm-yes">Haan, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet" id="sheet-wipe" role="dialog" aria-modal="true">
+    <div class="confirmbox">
+      <div style="font-size:40px;">⚠️</div>
+      <p>Kya aap waqai SAARA data delete karna chahte hain? Ye wapas nahi aayega.</p>
+      <p style="font-size:14px; color:var(--ink-soft);" id="wipe-counts"></p>
+      <div class="row">
+        <button class="btn3d btn-ghost" data-close>Cancel</button>
+        <button class="btn3d btn-red" id="btn-wipe-yes">Haan, Saara Saaf Karo</button>
       </div>
     </div>
   </div>
@@ -633,23 +677,47 @@
   var LS_KEY = "gharKharchaLive.v1";
 
   var CATEGORIES = [
-    { name: "Ration/Kirana",   icon: "🛒" },
-    { name: "Sabzi & Phal",    icon: "🥦" },
-    { name: "Doodh/Dahi",      icon: "🥛" },
-    { name: "Bijli Bill",      icon: "💡" },
-    { name: "Gas Bill",        icon: "🔥" },
-    { name: "Pani Bill",       icon: "💧" },
-    { name: "Mobile Recharge", icon: "📱" },
-    { name: "Kiraya",          icon: "🏠" },
-    { name: "Bachon ki Fees",  icon: "🎒" },
-    { name: "Dawai/Sehat",     icon: "💊" },
-    { name: "Kapray",          icon: "👕" },
-    { name: "Transport",       icon: "🚌" },
-    { name: "Mehman/Dawat",    icon: "🍽️" },
-    { name: "Ghar ka Saman",   icon: "🧺" },
-    { name: "Bachat",          icon: "🐷" },
-    { name: "Doosra",          icon: "📦" }
+    { name: "راشن",   icon: "🛒" },
+    { name: "گروسری",    icon: "🥦" },
+    { name: "گوشت",      icon: "🍖" },
+    { name: "صفائی و ٹوائلٹریز",      icon: "🧼" },
+    { name: "بلز",        icon: "🧾" },
+    { name: "پیٹرول / کرایہ",       icon: "⛽" },
+    { name: "تعلیم و صحت",          icon: "🎒" },
+    { name: "متفرق / ایمرجنسی",          icon: "📦" }
   ];
+  var BILL_TYPES = ["گیس بل", "پانی بل", "بجلی بل", "نیٹ بل"];
+  function catDisplay(cat, billType){ return cat === "بلز" && billType ? cat + " · " + billType : (cat || ""); }
+  var OLD_CAT_MAP = {
+    "Ration/Kirana": { cat: "راشن" },
+    "Sabzi & Phal": { cat: "گروسری" },
+    "Doodh/Dahi": { cat: "گروسری" },
+    "روزمرہ / سبزی دودھ": { cat: "گروسری" },
+    "گریسری": { cat: "گروسری" },
+    "Bijli Bill": { cat: "بلز", bill: "بجلی بل" },
+    "Gas Bill": { cat: "بلز", bill: "گیس بل" },
+    "Pani Bill": { cat: "بلز", bill: "پانی بل" },
+    "Mobile Recharge": { cat: "بلز", bill: "نیٹ بل" },
+    "Kiraya": { cat: "پیٹرول / کرایہ" },
+    "Transport": { cat: "پیٹرول / کرایہ" },
+    "Bachon ki Fees": { cat: "تعلیم و صحت" },
+    "Dawai/Sehat": { cat: "تعلیم و صحت" },
+    "Kapray": { cat: "متفرق / ایمرجنسی" },
+    "Mehman/Dawat": { cat: "متفرق / ایمرجنسی" },
+    "Ghar ka Saman": { cat: "صفائی و ٹوائلٹریز" },
+    "Bachat": { cat: "متفرق / ایمرجنسی" },
+    "Doosra": { cat: "متفرق / ایمرجنسی" }
+  };
+  function isNewCat(name){ for (var i = 0; i < CATEGORIES.length; i++) if (CATEGORIES[i].name === name) return true; return false; }
+  function migrateCatItem(it){
+    if (!it || !it.category) return false;
+    var changed = false;
+    if (typeof it.billType !== "string"){ it.billType = ""; changed = true; }
+    var m = OLD_CAT_MAP[it.category];
+    if (m){ it.category = m.cat; if (m.bill && !it.billType) it.billType = m.bill; changed = true; }
+    else if (!isNewCat(it.category)){ it.category = "متفرق / ایمرجنسی"; changed = true; }
+    return changed;
+  }
   var SOURCES = [
     { name: "Shohar ki Tankhwah", icon: "💼" },
     { name: "Karobar",            icon: "🏪" },
@@ -657,11 +725,11 @@
   ];
   var BILL_PRESETS = ["Bijli Bill", "Gas Bill", "Pani Bill", "Ghar ka Kiraya", "Bachon ki Fees", "Internet", "TV Cable"];
   var FIXED_PRESETS = [
-    { name: "Bachon ki School Fees", icon: "🎒", cat: "Bachon ki Fees" },
-    { name: "Tuition Fees",          icon: "📚", cat: "Bachon ki Fees" },
-    { name: "Van ka Kiraya",         icon: "🚐", cat: "Transport" },
-    { name: "Ghar ka Kiraya",        icon: "🏠", cat: "Kiraya" },
-    { name: "Doodh ka Kharcha",      icon: "🥛", cat: "Doodh/Dahi" }
+    { name: "Bachon ki School Fees", icon: "🎒", cat: "تعلیم و صحت" },
+    { name: "Tuition Fees",          icon: "📚", cat: "تعلیم و صحت" },
+    { name: "Van ka Kiraya",         icon: "🚐", cat: "پیٹرول / کرایہ" },
+    { name: "Ghar ka Kiraya",        icon: "🏠", cat: "پیٹرول / کرایہ" },
+    { name: "Doodh ka Kharcha",      icon: "🥛", cat: "گروسری" }
   ];
   var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   var MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -679,6 +747,12 @@
     if (raw) { var parsed = JSON.parse(raw); if (parsed && typeof parsed === "object") S = Object.assign(blankState(), parsed); }
   } catch (e) { S = blankState(); }
   function save(){ try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {} }
+  (function migrateOldData(){
+    var changed = false;
+    (S.expenses || []).forEach(function(e){ if (migrateCatItem(e)) changed = true; if (typeof e.spender !== "string"){ e.spender = ""; changed = true; } });
+    (S.fixed || []).forEach(function(f){ if (migrateCatItem(f)) changed = true; });
+    if (changed) save();
+  })();
 
   /* ================= HELPERS ================= */
   function $(id){ return document.getElementById(id); }
@@ -694,7 +768,7 @@
   function monthLabel(mk){ var p = mk.split("-"); return MONTHS[(+p[1]) - 1] + " " + p[0]; }
   function fmtDate(s){ var d = parseD(s); return d.getDate() + " " + MONTHS_SHORT[d.getMonth()] + " " + d.getFullYear(); }
   function fmtShort(d){ return d.getDate() + " " + MONTHS_SHORT[d.getMonth()]; }
-  function catIcon(name){ for (var i = 0; i < CATEGORIES.length; i++) if (CATEGORIES[i].name === name) return CATEGORIES[i].icon; return "📦"; }
+  function catIcon(name){ var base = String(name || "").split(" · ")[0]; for (var i = 0; i < CATEGORIES.length; i++) if (CATEGORIES[i].name === base) return CATEGORIES[i].icon; return "📦"; }
   function srcIcon(name){ for (var i = 0; i < SOURCES.length; i++) if (SOURCES[i].name === name) return SOURCES[i].icon; return "💰"; }
   function sumArr(arr){ var t = 0; for (var i = 0; i < arr.length; i++) t += Number(arr[i].amount) || 0; return t; }
   function expInMonth(mk){ return S.expenses.filter(function(e){ return mkOf(e.date) === mk; }); }
@@ -800,22 +874,39 @@
   }
 
   /* ================= EXPENSE SHEET ================= */
-  var expCats = chipGroup("exp-cats", CATEGORIES, "Ration/Kirana");
+  (function buildExpCatSelect(){
+    var sel = $("exp-cat-select");
+    CATEGORIES.forEach(function(c){ var o = document.createElement("option"); o.value = c.name; o.textContent = c.icon + " " + c.name; sel.appendChild(o); });
+    sel.value = "راشن";
+    sel.addEventListener("change", toggleExpBill);
+  })();
+  function toggleExpBill(){
+    var isBill = $("exp-cat-select").value === "بلز";
+    $("exp-billtype-field").style.display = isBill ? "block" : "none";
+    if (!isBill) $("exp-billtype-field").classList.remove("invalid");
+  }
   var editExpenseId = null;
   function openExpense(edit){
     editExpenseId = edit ? edit.id : null;
     $("exp-sheet-title").textContent = edit ? "✏️ Kharcha Badlein" : "＋ Naya Kharcha";
     $("exp-amount").value = edit ? edit.amount : "";
-    expCats.set(edit ? edit.category : "Ration/Kirana");
+    $("exp-cat-select").value = edit && isNewCat(edit.category) ? edit.category : "راشن";
+    $("exp-billtype").value = edit ? (edit.billType || "") : "";
+    toggleExpBill();
+    $("exp-spender").value = edit ? (edit.spender || "") : "";
     $("exp-date").value = edit ? edit.date : todayStr();
     $("exp-note").value = edit ? (edit.note || "") : "";
     $("exp-amt-field").classList.remove("invalid");
+    $("exp-billtype-field").classList.remove("invalid");
     openSheet("sheet-expense");
   }
   $("btn-save-expense").addEventListener("click", function(){
     var amt = parseFloat($("exp-amount").value);
     if (!amt || amt <= 0){ $("exp-amt-field").classList.add("invalid"); $("exp-amount").focus(); return; }
-    var data = { amount: amt, category: expCats.get(), date: $("exp-date").value || todayStr(), note: $("exp-note").value.trim() };
+    var cat = $("exp-cat-select").value;
+    var billType = cat === "بلز" ? $("exp-billtype").value : "";
+    if (cat === "بلز" && !billType){ $("exp-billtype-field").classList.add("invalid"); $("exp-billtype").focus(); return; }
+    var data = { amount: amt, category: cat, billType: billType, spender: $("exp-spender").value.trim(), date: $("exp-date").value || todayStr(), note: $("exp-note").value.trim() };
     if (editExpenseId){
       S.expenses = S.expenses.map(function(e){ return e.id === editExpenseId ? Object.assign({}, e, data) : e; });
       toast("✅ Kharcha update ho gaya");
@@ -941,9 +1032,16 @@
     presetChips("fix-presets", function(p){
       $("fix-name").value = p.name;
       $("fix-cat").value = p.cat;
+      toggleFixBill();
       pulseAmount();
     });
+    selEl.addEventListener("change", toggleFixBill);
   })();
+  function toggleFixBill(){
+    var isBill = $("fix-cat").value === "بلز";
+    $("fix-billtype-field").style.display = isBill ? "block" : "none";
+    if (!isBill) $("fix-billtype-field").classList.remove("invalid");
+  }
   function pulseAmount(){
     var a = $("fix-amount");
     a.classList.remove("pulse"); void a.offsetWidth; a.classList.add("pulse");
@@ -954,8 +1052,11 @@
     $("fix-sheet-title").textContent = edit ? "✏️ Lazmi Kharcha Badlein" : "＋ Lazmi Kharcha";
     $("fix-name").value = edit ? edit.name : (preset ? preset.name : "");
     $("fix-amount").value = edit ? edit.amount : "";
-    $("fix-cat").value = edit ? edit.category : (preset ? preset.cat : "Doosra");
+    $("fix-cat").value = edit ? edit.category : (preset ? preset.cat : "متفرق / ایمرجنسی");
+    $("fix-billtype").value = edit ? (edit.billType || "") : "";
+    toggleFixBill();
     $("fix-amt-field").classList.remove("invalid");
+    $("fix-billtype-field").classList.remove("invalid");
     openSheet("sheet-fixed");
     if (preset && !edit) setTimeout(pulseAmount, 300);
   }
@@ -964,7 +1065,10 @@
     var amt = parseFloat($("fix-amount").value);
     if (!name){ $("fix-name").focus(); toast("Kharchay ka naam likhein"); return; }
     if (!amt || amt <= 0){ $("fix-amt-field").classList.add("invalid"); pulseAmount(); return; }
-    var data = { name: name, amount: amt, category: $("fix-cat").value };
+    var fcat = $("fix-cat").value;
+    var fbill = fcat === "بلز" ? $("fix-billtype").value : "";
+    if (fcat === "بلز" && !fbill){ $("fix-billtype-field").classList.add("invalid"); $("fix-billtype").focus(); return; }
+    var data = { name: name, amount: amt, category: fcat, billType: fbill };
     if (editFixedId){
       S.fixed = S.fixed.map(function(f){ return f.id === editFixedId ? Object.assign({}, f, data) : f; });
       toast("✅ Lazmi kharcha update ho gaya");
@@ -980,7 +1084,7 @@
     var mk = curMK(), added = 0, total = 0;
     S.fixed.forEach(function(f){
       if (!f.addedMonths[mk]){
-        S.expenses.unshift({ id: uid(), amount: f.amount, category: f.category, date: todayStr(), note: "Lazmi kharcha: " + f.name });
+        S.expenses.unshift({ id: uid(), amount: f.amount, category: f.category, billType: f.billType || "", spender: "", date: todayStr(), note: "Lazmi kharcha: " + f.name });
         f.addedMonths[mk] = true; added++; total += Number(f.amount) || 0;
       }
     });
@@ -1039,7 +1143,7 @@
 
     /* top 3 categories */
     var byCat = {};
-    expInMonth(mk).forEach(function(e){ byCat[e.category] = (byCat[e.category] || 0) + (Number(e.amount) || 0); });
+    expInMonth(mk).forEach(function(e){ var k = catDisplay(e.category, e.billType); byCat[k] = (byCat[k] || 0) + (Number(e.amount) || 0); });
     var cats = Object.keys(byCat).sort(function(a, b){ return byCat[b] - byCat[a]; }).slice(0, 3);
     var box = $("top-cats");
     if (!cats.length){ box.innerHTML = '<div class="empty">Is mahine abhi koi kharcha nahi</div>'; }
@@ -1096,7 +1200,7 @@
     var items = S.expenses.filter(function(e){
       if (filterCat !== "Sab" && e.category !== filterCat) return false;
       if (searchQ){
-        var hay = (e.category + " " + (e.note || "")).toLowerCase();
+        var hay = (catDisplay(e.category, e.billType) + " " + (e.billType || "") + " " + (e.spender || "") + " " + (e.note || "")).toLowerCase();
         if (hay.indexOf(searchQ) === -1) return false;
       }
       return true;
@@ -1114,8 +1218,11 @@
         head.innerHTML = '<span class="dt">' + dayLabel(ds) + (ds !== todayStr() && dayLabel(ds) !== "Kal" ? "" : ' · <span style="font-weight:700;">' + fmtDate(ds) + '</span>') + '</span><span>' + rs(sumArr(groups[ds])) + '</span>';
         g.appendChild(head);
         groups[ds].forEach(function(e){
+          var subParts = [];
+          if (e.spender) subParts.push("👤 " + e.spender);
+          if (e.note) subParts.push(e.note);
           g.appendChild(entryRow({
-            icon: catIcon(e.category), title: e.category, sub: e.note || "—",
+            icon: catIcon(e.category), title: catDisplay(e.category, e.billType), sub: subParts.length ? subParts.join(" · ") : "—",
             amount: e.amount, amtClass: "neg", type: "expense", id: e.id,
             onEdit: (function(en){ return function(){ openExpense(en); }; })(e)
           }));
@@ -1197,7 +1304,7 @@
       S.fixed.forEach(function(f){
         var added = !!f.addedMonths[mk];
         var row = document.createElement("div"); row.className = "billrow";
-        row.innerHTML = '<div class="tx"><div class="t1">' + esc(f.name) + '</div><div class="t2">' + esc(f.category) + ' ' +
+        row.innerHTML = '<div class="tx"><div class="t1">' + esc(f.name) + '</div><div class="t2">' + esc(catDisplay(f.category, f.billType)) + ' ' +
           (added ? '<span class="badge badge-done">✅ Add ho gaya</span>' : '<span class="badge badge-due">⏳ Baaki hai</span>') + '</div></div>' +
           '<div class="amt">' + rs(f.amount) + '</div>';
         row.appendChild(trashBtn("fixed", f.id, f.name));
@@ -1237,7 +1344,7 @@
     exp.forEach(function(e){ if (!biggest || (Number(e.amount) || 0) > (Number(biggest.amount) || 0)) biggest = e; });
 
     var byCat = {};
-    exp.forEach(function(e){ byCat[e.category] = (byCat[e.category] || 0) + (Number(e.amount) || 0); });
+    exp.forEach(function(e){ var k = catDisplay(e.category, e.billType); byCat[k] = (byCat[k] || 0) + (Number(e.amount) || 0); });
     var cats = Object.keys(byCat).sort(function(a, b){ return byCat[b] - byCat[a]; });
     var catHtml = cats.length ? cats.map(function(c){
       return '<div class="catbar"><div class="r"><span>' + catIcon(c) + " " + esc(c) + '</span><span class="a">' + rs(byCat[c]) + '</span></div>' +
@@ -1265,7 +1372,7 @@
       '<div class="card3d" style="margin-top:12px;"><div class="vs">' + vsHtml + '</div>' +
         '<div style="display:flex; gap:18px; flex-wrap:wrap; margin-top:12px;">' +
           '<div><div style="font-size:12.5px; font-weight:900; color:var(--ink-soft);">ROZ KA AVERAGE</div><div style="font-size:20px; font-weight:900;">' + rs(avg) + '</div></div>' +
-          '<div><div style="font-size:12.5px; font-weight:900; color:var(--ink-soft);">SAB SE BARA KHARCHA</div><div style="font-size:20px; font-weight:900;">' + (biggest ? rs(biggest.amount) : "—") + '</div>' + (biggest ? '<div style="font-size:13px; color:var(--ink-soft); font-weight:700;">' + esc(biggest.category) + " · " + fmtDate(biggest.date) + '</div>' : "") + '</div>' +
+          '<div><div style="font-size:12.5px; font-weight:900; color:var(--ink-soft);">SAB SE BARA KHARCHA</div><div style="font-size:20px; font-weight:900;">' + (biggest ? rs(biggest.amount) : "—") + '</div>' + (biggest ? '<div style="font-size:13px; color:var(--ink-soft); font-weight:700;">' + esc(catDisplay(biggest.category, biggest.billType)) + (biggest.spender ? " · 👤 " + esc(biggest.spender) : "") + " · " + fmtDate(biggest.date) + '</div>' : "") + '</div>' +
           '<div><div style="font-size:12.5px; font-weight:900; color:var(--ink-soft);">BACHAT</div><div style="font-size:20px; font-weight:900; color:' + (inc - expT < 0 ? "var(--red)" : "var(--green)") + ';">' + rs(inc - expT) + '</div></div>' +
         '</div></div>' +
       '<h3 class="secttl">🏷️ Category-wise Kharcha</h3><div class="card3d">' + catHtml + '</div>' +
@@ -1319,6 +1426,32 @@
     save(); renderAll(); toast("✅ Hafta-war hadaf save ho gaya");
   });
 
+  /* ================= WIPE ALL DATA (factory reset) ================= */
+  $("btn-wipe-all").addEventListener("click", function(){
+    var total = S.expenses.length + S.incomes.length + S.bills.length + S.fixed.length + S.sadqa.length;
+    $("wipe-counts").textContent = total > 0
+      ? "Abhi app mein " + S.expenses.length + " kharchay, " + S.incomes.length + " aamdani, " + S.bills.length + " bills, " + S.fixed.length + " lazmi kharchay aur " + S.sadqa.length + " sadqa entries hain — ye sab delete ho jayengi."
+      : "Abhi app mein koi data nahi hai.";
+    openSheet("sheet-wipe");
+  });
+  $("btn-wipe-yes").addEventListener("click", function(){
+    S = blankState();
+    try { localStorage.removeItem(LS_KEY); } catch (e) {}
+    $("su-income").value = "";
+    $("su-budget").value = "";
+    $("su-exp-amount").value = "";
+    $("su-inc-field").classList.remove("invalid");
+    $("su-bud-field").classList.remove("invalid");
+    $("exp-search").value = ""; searchQ = "";
+    $("rep-month").value = curMK();
+    closeSheets();
+    showStep(1);
+    switchTab("home");
+    $("setup").classList.add("on");
+    window.scrollTo(0, 0);
+    toast("🗑️ Saara data saaf ho gaya — app nayi halat mein hai");
+  });
+
   /* ================= BUTTON WIRING ================= */
   $("btn-add-expense").addEventListener("click", function(){ openExpense(null); });
   $("btn-add-expense2").addEventListener("click", function(){ openExpense(null); });
@@ -1332,7 +1465,7 @@
 
   /* ================= SETUP WIZARD ================= */
   var suSrcs = chipGroup("su-sources", SOURCES, "Shohar ki Tankhwah");
-  var suCats = chipGroup("su-cats", CATEGORIES, "Ration/Kirana");
+  var suCats = chipGroup("su-cats", CATEGORIES, "راشن");
   function showStep(n){
     [1, 2, 3].forEach(function(i){
       $("step" + i).classList.toggle("on", i === n);
@@ -1356,7 +1489,7 @@
     if (incAmt > 0) S.incomes.unshift({ id: uid(), amount: incAmt, source: suSrcs.get(), date: todayStr(), note: "Setup — mahana aamdani" });
     S.settings.budget = Math.max(0, parseFloat($("su-budget").value) || 0);
     var eAmt = parseFloat($("su-exp-amount").value) || 0;
-    if (eAmt > 0) S.expenses.unshift({ id: uid(), amount: eAmt, category: suCats.get(), date: todayStr(), note: "" });
+    if (eAmt > 0) S.expenses.unshift({ id: uid(), amount: eAmt, category: suCats.get(), billType: "", spender: "", date: todayStr(), note: "" });
     S.setupDone = true;
     save();
     $("setup").classList.remove("on");
